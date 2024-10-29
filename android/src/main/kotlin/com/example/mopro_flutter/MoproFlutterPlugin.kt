@@ -8,18 +8,16 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
-import android.content.Context
-import kotlinx.coroutines.launch
 import uniffi.mopro.generateCircomProof
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
 
 import org.json.JSONObject
-import android.util.Base64
 import android.util.Log
 import io.flutter.plugin.common.JSONMethodCodec
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import uniffi.mopro.GenerateProofResult
+import uniffi.mopro.toEthereumInputs
+import uniffi.mopro.toEthereumProof
 
 /** MoproFlutterPlugin */
 class MoproFlutterPlugin: FlutterPlugin, MethodCallHandler {
@@ -55,16 +53,15 @@ class MoproFlutterPlugin: FlutterPlugin, MethodCallHandler {
       val inputs = inputsJson.toMap() as Map<String, List<String>>
  
       val res: GenerateProofResult = generateCircomProof(zkeyPath, inputs)
-
+      val proof = toEthereumProof(res.proof)
+      val convertedInputs = toEthereumInputs(res.inputs)
+      
       Log.d("generateProof", "$res")
-      // Convert ByteArray fields to Base64 strings
-        val proofBase64 = Base64.encodeToString(res.proof, Base64.NO_WRAP)
-        val inputsBase64 = Base64.encodeToString(res.inputs, Base64.NO_WRAP)
 
         // Build the JSON response
         val json = JSONObject().apply {
-            put("proof", proofBase64)  // Base64-encoded proof
-            put("inputs", inputsBase64)  // Base64-encoded inputs
+            put("proof", Json.encodeToString(proof))
+            put("inputs", Json.encodeToString(convertedInputs))
         }
 
         // Send the JSON string back to Flutter

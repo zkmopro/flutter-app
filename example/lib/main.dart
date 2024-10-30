@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -40,8 +38,6 @@ class _MyAppState extends State<MyApp> {
     // The proof is a base64 string
     var proof = _proofResult?.proof ?? "";
     // Decode the proof and inputs to see the actual values
-    var decodedProof = base64Decode(proof);
-    var decodedInputs = base64Decode(inputs);
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -76,7 +72,7 @@ class _MyAppState extends State<MyApp> {
                 child: TextFormField(
                   controller: _controllerB,
                   decoration: const InputDecoration(
-                    labelText: "Public input `b`",
+                    labelText: "Private input `b`",
                     hintText: "For example, 3",
                   ),
                   keyboardType: TextInputType.number,
@@ -113,9 +109,6 @@ class _MyAppState extends State<MyApp> {
                             setState(() {
                               isProving = false;
                             });
-                            print(
-                              "Proof result: $proofResult",
-                            );
                           } on PlatformException catch (e) {
                             print("Error: $e");
                             error = e;
@@ -146,11 +139,11 @@ class _MyAppState extends State<MyApp> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text('Proof inputs: $decodedInputs'),
+                      child: Text('Proof inputs: $inputs'),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text('Proof: $decodedProof'),
+                      child: Text('Proof: $proof'),
                     ),
                   ],
                 ),

@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:mopro_flutter/mopro_flutter.dart';
 
 import 'mopro_flutter_platform_interface.dart';
 

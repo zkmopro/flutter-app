@@ -102,3 +102,9 @@ Follow the [Rust Setup steps from the MoPro official docs](https://zkmopro.org/d
    ```
 
 Don't forget to modify the input values for your specific case!
+
+## Developing The Plugin
+
+### Android
+
+Open the `./example/android` directory in Android Studio. You will be able to browse to the plugin code in `Android` and `Project` view:

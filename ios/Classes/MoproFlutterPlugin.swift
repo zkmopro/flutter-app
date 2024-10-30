@@ -4,7 +4,7 @@ import UIKit
 
 public class MoproFlutterPlugin: NSObject, FlutterPlugin {
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let channel = FlutterMethodChannel(name: "mopro_flutter", binaryMessenger: registrar.messenger(), codec: FlutterJSONMethodCodec())
+        let channel = FlutterMethodChannel(name: "mopro_flutter", binaryMessenger: registrar.messenger())
         let instance = MoproFlutterPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
@@ -25,21 +25,20 @@ public class MoproFlutterPlugin: NSObject, FlutterPlugin {
                 let proofResult = try generateCircomProof(zkeyPath: zkeyPath, circuitInputs: inputs)
                 let proof = toEthereumProof(proof: proofResult.proof)
                 let convertedInputs = toEthereumInputs(inputs: proofResult.inputs)
-                let proofJson = try JSONEncoder().encode(proof)
-                let inputsJson = try JSONEncoder().encode(convertedInputs)
-
-                if let proofString = String(data: proofJson, encoding: .utf8), let inputsString = String(data: inputsJson, encoding: .utf8) {
-                    let response: [String: String] = [
-                        "proof": proofString,
-                        "inputs": inputsString
-                    ]
-                    result(response)
-                } else {
-                    result(FlutterError(code: "PROOF_GENERATION_ERROR", message: "Failed to convert proof to a string.", details: nil))
-                }
-
-                // Return the response to Flutter
-
+               
+                let proofList: [[String: Any]] = [
+                    ["x": proof.a.x, "y": proof.a.y],
+                    ["x": proof.b.x, "y": proof.b.y],
+                    ["x": proof.c.x, "y": proof.c.y]
+                ]
+                
+                let resMap: [String: Any] = [
+                    "proof": proofList,
+                    "inputs": convertedInputs
+                ]
+                
+                // Return the proof and inputs as a map supported by the StandardMethodCodec
+                result(resMap)
             } catch {
                 result(FlutterError(code: "PROOF_GENERATION_ERROR", message: "Failed to generate proof", details: error.localizedDescription))
             }

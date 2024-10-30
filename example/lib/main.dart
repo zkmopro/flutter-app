@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:mopro_flutter/mopro_flutter.dart';
+import 'package:mopro_flutter/mopro_types.dart';
 
 void main() {
   runApp(const MyApp());
@@ -95,7 +96,7 @@ class _MyAppState extends State<MyApp> {
                           });
 
                           FocusManager.instance.primaryFocus?.unfocus();
-                          Map<String, dynamic>? proofResult;
+                          GenerateProofResult? proofResult;
                           PlatformException? error;
                           // Platform messages may fail, so we use a try/catch PlatformException.
                           // We also handle the message potentially returning null.
@@ -121,10 +122,7 @@ class _MyAppState extends State<MyApp> {
                           if (!mounted) return;
 
                           setState(() {
-                            _proofResult = proofResult == null
-                                ? null
-                                : GenerateProofResult(proofResult["proof"],
-                                    proofResult["inputs"]);
+                            _proofResult = proofResult;
                             _error = error;
                           });
                         },

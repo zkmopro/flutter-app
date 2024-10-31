@@ -25,6 +25,7 @@ Flutter is a popular cross-platform mobile app development framework. Mopro Flut
    Navigate to the root directory of the project in your terminal and run:
 
    ```bash
+   cd your_flutter_app
    flutter pub get
    ```
 
@@ -41,13 +42,7 @@ Flutter is a popular cross-platform mobile app development framework. Mopro Flut
 
 If you prefer using the terminal to run the app, use the following steps:
 
-1. Navigate to the `example` directory of the project:
-
-   ```bash
-   cd example
-   ```
-
-2. For Android:
+1. For Android:
 
    Ensure you have an Android emulator running or a device connected. Then run:
 
@@ -55,7 +50,7 @@ If you prefer using the terminal to run the app, use the following steps:
    flutter run
    ```
 
-3. For iOS:
+2. For iOS:
 
    Make sure you have an iOS simulator running or a device connected. Then run:
 
@@ -75,24 +70,24 @@ Follow the [Rust Setup steps from the MoPro official docs](https://zkmopro.org/d
 
 #### iOS
 
-1. Replace `mopro.swift` at [`ios/Classes/mopro.swift`](ios/Classes/mopro.swift) with the file generated during the [Setup](#setup).
-2. Replace the directory [`ios/MoproBindings.xcframework`](ios/MoproBindings.xcframework) with the one generated during the [Setup](#setup).
+1. Replace `mopro.swift` at [`mopro_flutter_plugin/ios/Classes/mopro.swift`](mopro_flutter_plugin/ios/Classes/mopro.swift) with the file generated during the [Setup](#setup).
+2. Replace the directory [`mopro_flutter_plugin/ios/MoproBindings.xcframework`](mopro_flutter_plugin/ios/MoproBindings.xcframework) with the one generated during the [Setup](#setup).
 
 #### Android
 
-1. Replace the directory [`android/src/main/jniLibs`](android/src/main/jniLibs) with the one generated during the [Setup](#setup).
-2. Replace `mopro.kt` at [`android/src/main/kotlin/uniffi/mopro/mopro.kt`](android/src/main/kotlin/uniffi/mopro/mopro.kt) with the file generated during the [Setup](#setup).
+1. Replace the directory [`mopro_flutter_plugin/android/src/main/jniLibs`](mopro_flutter_plugin/android/src/main/jniLibs) with the one generated during the [Setup](#setup).
+2. Replace `mopro.kt` at [`mopro_flutter_plugin/android/src/main/kotlin/uniffi/mopro/mopro.kt`](mopro_flutter_plugin/android/src/main/kotlin/uniffi/mopro/mopro.kt) with the file generated during the [Setup](#setup).
 
 ### zKey
 
-1. Place your `.zkey` file in your app's assets folder. For example, to run the included example app, you need to replace the `.zkey` at [`example/assets/multiplier2_final.zkey`](example/assets/multiplier2_final.zkey) with your file. If you change the `.zkey` file name, don't forget to update the asset definition in your app's [`pubspec.yaml`](example/pubspec.yaml):
+1. Place your `.zkey` file in your app's assets folder. For example, to run the included example app, you need to replace the `.zkey` at [`your_flutter_app/assets/multiplier2_final.zkey`](your_flutter_app/assets/multiplier2_final.zkey) with your file. If you change the `.zkey` file name, don't forget to update the asset definition in your app's [`pubspec.yaml`](your_flutter_app/pubspec.yaml):
 
    ```yaml
    assets:
      - assets/your_new_zkey_file.zkey
    ```
 
-2. Load the new `.zkey` file properly in your Dart code. For example, update the file path in [`example/lib/main.dart`](example/lib/main.dart):
+2. Load the new `.zkey` file properly in your Dart code. For example, update the file path in [`your_flutter_app/lib/main.dart`](your_flutter_app/lib/main.dart):
 
    ```dart
    var inputs = <String, List<String>>{};
@@ -107,4 +102,4 @@ Don't forget to modify the input values for your specific case!
 
 ### Android
 
-Open the `./example/android` directory in Android Studio. You will be able to browse to the plugin code in `Android` and `Project` view:
+Open the `./your_flutter_app/android` directory in Android Studio. You will be able to browse to the plugin code in `Android` and `Project` view:

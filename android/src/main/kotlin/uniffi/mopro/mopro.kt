@@ -23,7 +23,6 @@ import com.sun.jna.Native
 import com.sun.jna.Pointer
 import com.sun.jna.Structure
 import com.sun.jna.ptr.*
-import kotlinx.serialization.Serializable
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.CharBuffer
@@ -1176,7 +1175,6 @@ public object FfiConverterByteArray : FfiConverterRustBuffer<ByteArray> {
     }
 }
 
-@Serializable
 data class G1(
     var `x`: kotlin.String,
     var `y`: kotlin.String,
@@ -1206,7 +1204,6 @@ public object FfiConverterTypeG1 : FfiConverterRustBuffer<G1> {
     }
 }
 
-@Serializable
 data class G2(
     var `x`: List<kotlin.String>,
     var `y`: List<kotlin.String>,
@@ -1265,7 +1262,6 @@ public object FfiConverterTypeGenerateProofResult : FfiConverterRustBuffer<Gener
     }
 }
 
-@Serializable
 data class ProofCalldata(
     var `a`: G1,
     var `b`: G2,

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:mopro_flutter/mopro_types.dart';
 
 import 'mopro_flutter_platform_interface.dart';
 
@@ -7,17 +8,23 @@ import 'mopro_flutter_platform_interface.dart';
 class MethodChannelMoproFlutter extends MoproFlutterPlatform {
   /// The method channel used to interact with the native platform.
   @visibleForTesting
-  final methodChannel = const MethodChannel('mopro_flutter', JSONMethodCodec());
+  final methodChannel = const MethodChannel('mopro_flutter');
 
   @override
-  Future<Map<String, dynamic>?> generateProof(
+  Future<GenerateProofResult?> generateProof(
       String zkeyPath, Map<String, List<String>> inputs) async {
     final proofResult = await methodChannel
-        .invokeMethod<Map<String, dynamic>>('generateProof', {
+        .invokeMethod<Map<Object?, Object?>>('generateProof', {
       'zkeyPath': zkeyPath,
       'inputs': inputs,
     });
-    print("proofResult: $proofResult");
-    return proofResult;
+
+    if (proofResult == null) {
+      return null;
+    }
+
+    var generateProofResult = GenerateProofResult.fromMap(proofResult);
+
+    return generateProofResult;
   }
 }

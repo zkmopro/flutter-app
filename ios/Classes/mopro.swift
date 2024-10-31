@@ -455,7 +455,7 @@ private struct FfiConverterData: FfiConverterRustBuffer {
     }
 }
 
-public struct G1: Codable {
+public struct G1 {
     public var x: String
     public var y: String
 
@@ -507,7 +507,7 @@ public func FfiConverterTypeG1_lower(_ value: G1) -> RustBuffer {
     return FfiConverterTypeG1.lower(value)
 }
 
-public struct G2: Codable {
+public struct G2 {
     public var x: [String]
     public var y: [String]
 
@@ -611,7 +611,7 @@ public func FfiConverterTypeGenerateProofResult_lower(_ value: GenerateProofResu
     return FfiConverterTypeGenerateProofResult.lower(value)
 }
 
-public struct ProofCalldata: Codable {
+public struct ProofCalldata {
     public var a: G1
     public var b: G2
     public var c: G1

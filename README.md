@@ -2,6 +2,9 @@
 
 Flutter is a popular cross-platform mobile app development framework. Mopro Flutter shows an example of integrating ZK-proving into a Flutter app, allowing for streamlined creation of ZK-enabled mobile apps.
 
+> [!IMPORTANT]
+> Please refer to the latest [mopro documentation](https://zkmopro.org/docs/next/setup/flutter-setup) for the most up-to-date information.
+
 ## Running The Example App
 
 ### Prerequisites
@@ -63,7 +66,7 @@ The example app comes with a simple prover generated from a Circom circuit. To i
 
 ### Setup
 
-Follow the [Rust Setup steps from the MoPro official docs](https://zkmopro.org/docs/getting-started/rust-setup) to generate the platform-specific libraries.
+Follow the [Rust Setup steps from the MoPro official docs](https://zkmopro.org/docs/setup/rust-setup) to generate the platform-specific libraries.
 
 ### Copying The Generated Libraries
 

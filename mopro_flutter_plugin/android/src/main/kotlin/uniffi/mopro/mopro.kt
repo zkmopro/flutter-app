@@ -34,6 +34,9 @@ import java.util.concurrent.atomic.AtomicLong
 // A rust-owned buffer is represented by its capacity, its current length, and a
 // pointer to the underlying data.
 
+/**
+ * @suppress
+ */
 @Structure.FieldOrder("capacity", "len", "data")
 open class RustBuffer : Structure() {
     // Note: `capacity` and `len` are actually `ULong` values, but JVM only supports signed values.
@@ -99,6 +102,8 @@ open class RustBuffer : Structure() {
  * Required for callbacks taking in an out pointer.
  *
  * Size is the sum of all values in the struct.
+ *
+ * @suppress
  */
 class RustBufferByReference : ByReference(16) {
     /**
@@ -133,7 +138,7 @@ class RustBufferByReference : ByReference(16) {
 // completeness.
 
 @Structure.FieldOrder("len", "data")
-open class ForeignBytes : Structure() {
+internal open class ForeignBytes : Structure() {
     @JvmField var len: Int = 0
 
     @JvmField var data: Pointer? = null
@@ -143,10 +148,14 @@ open class ForeignBytes : Structure() {
         Structure.ByValue
 }
 
-// The FfiConverter interface handles converter types to and from the FFI
-//
-// All implementing objects should be public to support external types.  When a
-// type is external we need to import it's FfiConverter.
+/**
+ * The FfiConverter interface handles converter types to and from the FFI
+ *
+ * All implementing objects should be public to support external types.  When a
+ * type is external we need to import it's FfiConverter.
+ *
+ * @suppress
+ */
 public interface FfiConverter<KotlinType, FfiType> {
     // Convert an FFI type to a Kotlin type
     fun lift(value: FfiType): KotlinType
@@ -213,7 +222,11 @@ public interface FfiConverter<KotlinType, FfiType> {
     }
 }
 
-// FfiConverter that uses `RustBuffer` as the FfiType
+/**
+ * FfiConverter that uses `RustBuffer` as the FfiType
+ *
+ * @suppress
+ */
 public interface FfiConverterRustBuffer<KotlinType> : FfiConverter<KotlinType, RustBuffer.ByValue> {
     override fun lift(value: RustBuffer.ByValue) = liftFromRustBuffer(value)
 
@@ -259,7 +272,11 @@ class InternalException(
     message: String,
 ) : kotlin.Exception(message)
 
-// Each top-level error class has a companion object that can lift the error from the call status's rust buffer
+/**
+ * Each top-level error class has a companion object that can lift the error from the call status's rust buffer
+ *
+ * @suppress
+ */
 interface UniffiRustCallStatusErrorHandler<E> {
     fun lift(error_buf: RustBuffer.ByValue): E
 }
@@ -302,7 +319,11 @@ private fun <E : kotlin.Exception> uniffiCheckCallStatus(
     }
 }
 
-// UniffiRustCallStatusErrorHandler implementation for times when we don't expect a CALL_ERROR
+/**
+ * UniffiRustCallStatusErrorHandler implementation for times when we don't expect a CALL_ERROR
+ *
+ * @suppress
+ */
 object UniffiNullRustCallStatusErrorHandler : UniffiRustCallStatusErrorHandler<InternalException> {
     override fun lift(error_buf: RustBuffer.ByValue): InternalException {
         RustBuffer.free(error_buf)
@@ -380,7 +401,7 @@ private fun findLibraryName(componentName: String): String {
     if (libOverride != null) {
         return libOverride
     }
-    return "uniffi_mopro"
+    return "mopro_bindings"
 }
 
 private inline fun <reified Lib : Library> loadIndirect(componentName: String): Lib =
@@ -728,23 +749,93 @@ internal interface UniffiForeignFutureCompleteVoid : com.sun.jna.Callback {
     )
 }
 
+// For large crates we prevent `MethodTooLargeException` (see #2340)
+// N.B. the name of the extension is very misleading, since it is
+// rather `InterfaceTooLargeException`, caused by too many methods
+// in the interface for large crates.
+//
+// By splitting the otherwise huge interface into two parts
+// * UniffiLib
+// * IntegrityCheckingUniffiLib (this)
+// we allow for ~2x as many methods in the UniffiLib interface.
+//
+// The `ffi_uniffi_contract_version` method and all checksum methods are put
+// into `IntegrityCheckingUniffiLib` and these methods are called only once,
+// when the library is loaded.
+internal interface IntegrityCheckingUniffiLib : Library {
+    // Integrity check functions only
+    fun uniffi_mopro_bindings_checksum_func_from_ethereum_inputs(): Short
+
+    fun uniffi_mopro_bindings_checksum_func_from_ethereum_proof(): Short
+
+    fun uniffi_mopro_bindings_checksum_func_generate_circom_proof(): Short
+
+    fun uniffi_mopro_bindings_checksum_func_generate_halo2_proof(): Short
+
+    fun uniffi_mopro_bindings_checksum_func_to_ethereum_inputs(): Short
+
+    fun uniffi_mopro_bindings_checksum_func_to_ethereum_proof(): Short
+
+    fun uniffi_mopro_bindings_checksum_func_verify_circom_proof(): Short
+
+    fun uniffi_mopro_bindings_checksum_func_verify_halo2_proof(): Short
+
+    fun ffi_mopro_bindings_uniffi_contract_version(): Int
+}
+
 // A JNA Library to expose the extern-C FFI definitions.
 // This is an implementation detail which will be called internally by the public API.
-
 internal interface UniffiLib : Library {
     companion object {
         internal val INSTANCE: UniffiLib by lazy {
-            loadIndirect<UniffiLib>(componentName = "mopro")
-                .also { lib: UniffiLib ->
+            val componentName = "mopro"
+            // For large crates we prevent `MethodTooLargeException` (see #2340)
+            // N.B. the name of the extension is very misleading, since it is
+            // rather `InterfaceTooLargeException`, caused by too many methods
+            // in the interface for large crates.
+            //
+            // By splitting the otherwise huge interface into two parts
+            // * UniffiLib (this)
+            // * IntegrityCheckingUniffiLib
+            // And all checksum methods are put into `IntegrityCheckingUniffiLib`
+            // we allow for ~2x as many methods in the UniffiLib interface.
+            //
+            // Thus we first load the library with `loadIndirect` as `IntegrityCheckingUniffiLib`
+            // so that we can (optionally!) call `uniffiCheckApiChecksums`...
+            loadIndirect<IntegrityCheckingUniffiLib>(componentName)
+                .also { lib: IntegrityCheckingUniffiLib ->
                     uniffiCheckContractApiVersion(lib)
                     uniffiCheckApiChecksums(lib)
                 }
+            // ... and then we load the library as `UniffiLib`
+            // N.B. we cannot use `loadIndirect` once and then try to cast it to `UniffiLib`
+            // => results in `java.lang.ClassCastException: com.sun.proxy.$Proxy cannot be cast to ...`
+            // error. So we must call `loadIndirect` twice. For crates large enough
+            // to trigger this issue, the performance impact is negligible, running on
+            // a macOS M1 machine the `loadIndirect` call takes ~50ms.
+            val lib = loadIndirect<UniffiLib>(componentName)
+            // No need to check the contract version and checksums, since
+            // we already did that with `IntegrityCheckingUniffiLib` above.
+            // Loading of library with integrity check done.
+            lib
         }
     }
+
+    // FFI functions
+    fun uniffi_mopro_bindings_fn_func_from_ethereum_inputs(
+        `inputs`: RustBuffer.ByValue,
+        uniffi_out_err: UniffiRustCallStatus,
+    ): RustBuffer.ByValue
+
+    fun uniffi_mopro_bindings_fn_func_from_ethereum_proof(
+        `proof`: RustBuffer.ByValue,
+        uniffi_out_err: UniffiRustCallStatus,
+    ): RustBuffer.ByValue
 
     fun uniffi_mopro_bindings_fn_func_generate_circom_proof(
         `zkeyPath`: RustBuffer.ByValue,
         `circuitInputs`: RustBuffer.ByValue,
+        `proofLib`: RustBuffer.ByValue,
         uniffi_out_err: UniffiRustCallStatus,
     ): RustBuffer.ByValue
 
@@ -769,6 +860,7 @@ internal interface UniffiLib : Library {
         `zkeyPath`: RustBuffer.ByValue,
         `proof`: RustBuffer.ByValue,
         `publicInput`: RustBuffer.ByValue,
+        `proofLib`: RustBuffer.ByValue,
         uniffi_out_err: UniffiRustCallStatus,
     ): Byte
 
@@ -995,25 +1087,11 @@ internal interface UniffiLib : Library {
         `handle`: Long,
         uniffi_out_err: UniffiRustCallStatus,
     ): Unit
-
-    fun uniffi_mopro_bindings_checksum_func_generate_circom_proof(): Short
-
-    fun uniffi_mopro_bindings_checksum_func_generate_halo2_proof(): Short
-
-    fun uniffi_mopro_bindings_checksum_func_to_ethereum_inputs(): Short
-
-    fun uniffi_mopro_bindings_checksum_func_to_ethereum_proof(): Short
-
-    fun uniffi_mopro_bindings_checksum_func_verify_circom_proof(): Short
-
-    fun uniffi_mopro_bindings_checksum_func_verify_halo2_proof(): Short
-
-    fun ffi_mopro_bindings_uniffi_contract_version(): Int
 }
 
-private fun uniffiCheckContractApiVersion(lib: UniffiLib) {
+private fun uniffiCheckContractApiVersion(lib: IntegrityCheckingUniffiLib) {
     // Get the bindings contract version from our ComponentInterface
-    val bindings_contract_version = 26
+    val bindings_contract_version = 29
     // Get the scaffolding contract version by calling the into the dylib
     val scaffolding_contract_version = lib.ffi_mopro_bindings_uniffi_contract_version()
     if (bindings_contract_version != scaffolding_contract_version) {
@@ -1022,25 +1100,38 @@ private fun uniffiCheckContractApiVersion(lib: UniffiLib) {
 }
 
 @Suppress("UNUSED_PARAMETER")
-private fun uniffiCheckApiChecksums(lib: UniffiLib) {
-    if (lib.uniffi_mopro_bindings_checksum_func_generate_circom_proof() != 54365.toShort()) {
+private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
+    if (lib.uniffi_mopro_bindings_checksum_func_from_ethereum_inputs() != 44693.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_mopro_bindings_checksum_func_generate_halo2_proof() != 3963.toShort()) {
+    if (lib.uniffi_mopro_bindings_checksum_func_from_ethereum_proof() != 10.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_mopro_bindings_checksum_func_to_ethereum_inputs() != 64747.toShort()) {
+    if (lib.uniffi_mopro_bindings_checksum_func_generate_circom_proof() != 57032.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_mopro_bindings_checksum_func_to_ethereum_proof() != 64531.toShort()) {
+    if (lib.uniffi_mopro_bindings_checksum_func_generate_halo2_proof() != 58744.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_mopro_bindings_checksum_func_verify_circom_proof() != 46591.toShort()) {
+    if (lib.uniffi_mopro_bindings_checksum_func_to_ethereum_inputs() != 10288.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_mopro_bindings_checksum_func_verify_halo2_proof() != 56128.toShort()) {
+    if (lib.uniffi_mopro_bindings_checksum_func_to_ethereum_proof() != 23344.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
+    if (lib.uniffi_mopro_bindings_checksum_func_verify_circom_proof() != 51239.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_mopro_bindings_checksum_func_verify_halo2_proof() != 24562.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+}
+
+/**
+ * @suppress
+ */
+public fun uniffiEnsureInitialized() {
+    UniffiLib.INSTANCE
 }
 
 // Async support
@@ -1067,6 +1158,9 @@ interface Disposable {
     }
 }
 
+/**
+ * @suppress
+ */
 inline fun <T : Disposable?, R> T.use(block: (T) -> R) =
     try {
         block(this)
@@ -1079,9 +1173,16 @@ inline fun <T : Disposable?, R> T.use(block: (T) -> R) =
         }
     }
 
-/** Used to instantiate an interface without an actual pointer, for fakes in tests, mostly. */
+/**
+ * Used to instantiate an interface without an actual pointer, for fakes in tests, mostly.
+ *
+ * @suppress
+ * */
 object NoPointer
 
+/**
+ * @suppress
+ */
 public object FfiConverterBoolean : FfiConverter<Boolean, Byte> {
     override fun lift(value: Byte): Boolean = value.toInt() != 0
 
@@ -1099,6 +1200,9 @@ public object FfiConverterBoolean : FfiConverter<Boolean, Byte> {
     }
 }
 
+/**
+ * @suppress
+ */
 public object FfiConverterString : FfiConverter<String, RustBuffer.ByValue> {
     // Note: we don't inherit from FfiConverterRustBuffer, because we use a
     // special encoding when lowering/lifting.  We can use `RustBuffer.len` to
@@ -1156,6 +1260,9 @@ public object FfiConverterString : FfiConverter<String, RustBuffer.ByValue> {
     }
 }
 
+/**
+ * @suppress
+ */
 public object FfiConverterByteArray : FfiConverterRustBuffer<ByteArray> {
     override fun read(buf: ByteBuffer): ByteArray {
         val len = buf.getInt()
@@ -1182,6 +1289,9 @@ data class G1(
     companion object
 }
 
+/**
+ * @suppress
+ */
 public object FfiConverterTypeG1 : FfiConverterRustBuffer<G1> {
     override fun read(buf: ByteBuffer): G1 =
         G1(
@@ -1211,6 +1321,9 @@ data class G2(
     companion object
 }
 
+/**
+ * @suppress
+ */
 public object FfiConverterTypeG2 : FfiConverterRustBuffer<G2> {
     override fun read(buf: ByteBuffer): G2 =
         G2(
@@ -1240,6 +1353,9 @@ data class GenerateProofResult(
     companion object
 }
 
+/**
+ * @suppress
+ */
 public object FfiConverterTypeGenerateProofResult : FfiConverterRustBuffer<GenerateProofResult> {
     override fun read(buf: ByteBuffer): GenerateProofResult =
         GenerateProofResult(
@@ -1270,6 +1386,9 @@ data class ProofCalldata(
     companion object
 }
 
+/**
+ * @suppress
+ */
 public object FfiConverterTypeProofCalldata : FfiConverterRustBuffer<ProofCalldata> {
     override fun read(buf: ByteBuffer): ProofCalldata =
         ProofCalldata(
@@ -1295,31 +1414,56 @@ public object FfiConverterTypeProofCalldata : FfiConverterRustBuffer<ProofCallda
     }
 }
 
-sealed class MoproException(
-    message: String,
-) : kotlin.Exception(message) {
+sealed class MoproException : kotlin.Exception() {
     class CircomException(
-        message: String,
-    ) : MoproException(message)
+        val v1: kotlin.String,
+    ) : MoproException() {
+        override val message
+            get() = "v1=${ v1 }"
+    }
 
     class Halo2Exception(
-        message: String,
-    ) : MoproException(message)
+        val v1: kotlin.String,
+    ) : MoproException() {
+        override val message
+            get() = "v1=${ v1 }"
+    }
 
     companion object ErrorHandler : UniffiRustCallStatusErrorHandler<MoproException> {
         override fun lift(error_buf: RustBuffer.ByValue): MoproException = FfiConverterTypeMoproError.lift(error_buf)
     }
 }
 
+/**
+ * @suppress
+ */
 public object FfiConverterTypeMoproError : FfiConverterRustBuffer<MoproException> {
     override fun read(buf: ByteBuffer): MoproException =
         when (buf.getInt()) {
-            1 -> MoproException.CircomException(FfiConverterString.read(buf))
-            2 -> MoproException.Halo2Exception(FfiConverterString.read(buf))
+            1 ->
+                MoproException.CircomException(
+                    FfiConverterString.read(buf),
+                )
+            2 ->
+                MoproException.Halo2Exception(
+                    FfiConverterString.read(buf),
+                )
             else -> throw RuntimeException("invalid error enum value, something is very wrong!!")
         }
 
-    override fun allocationSize(value: MoproException): ULong = 4UL
+    override fun allocationSize(value: MoproException): ULong =
+        when (value) {
+            is MoproException.CircomException -> (
+                // Add the size for the Int that specifies the variant plus the size needed for all fields
+                4UL +
+                    FfiConverterString.allocationSize(value.v1)
+            )
+            is MoproException.Halo2Exception -> (
+                // Add the size for the Int that specifies the variant plus the size needed for all fields
+                4UL +
+                    FfiConverterString.allocationSize(value.v1)
+            )
+        }
 
     override fun write(
         value: MoproException,
@@ -1328,16 +1472,50 @@ public object FfiConverterTypeMoproError : FfiConverterRustBuffer<MoproException
         when (value) {
             is MoproException.CircomException -> {
                 buf.putInt(1)
+                FfiConverterString.write(value.v1, buf)
                 Unit
             }
             is MoproException.Halo2Exception -> {
                 buf.putInt(2)
+                FfiConverterString.write(value.v1, buf)
                 Unit
             }
         }.let { /* this makes the `when` an expression, which ensures it is exhaustive */ }
     }
 }
 
+enum class ProofLib {
+    ARKWORKS,
+    RAPIDSNARK,
+    ;
+
+    companion object
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterTypeProofLib : FfiConverterRustBuffer<ProofLib> {
+    override fun read(buf: ByteBuffer) =
+        try {
+            ProofLib.values()[buf.getInt() - 1]
+        } catch (e: IndexOutOfBoundsException) {
+            throw RuntimeException("invalid enum value, something is very wrong!!", e)
+        }
+
+    override fun allocationSize(value: ProofLib) = 4UL
+
+    override fun write(
+        value: ProofLib,
+        buf: ByteBuffer,
+    ) {
+        buf.putInt(value.ordinal + 1)
+    }
+}
+
+/**
+ * @suppress
+ */
 public object FfiConverterSequenceString : FfiConverterRustBuffer<List<kotlin.String>> {
     override fun read(buf: ByteBuffer): List<kotlin.String> {
         val len = buf.getInt()
@@ -1363,6 +1541,9 @@ public object FfiConverterSequenceString : FfiConverterRustBuffer<List<kotlin.St
     }
 }
 
+/**
+ * @suppress
+ */
 public object FfiConverterMapStringSequenceString : FfiConverterRustBuffer<Map<kotlin.String, List<kotlin.String>>> {
     override fun read(buf: ByteBuffer): Map<kotlin.String, List<kotlin.String>> {
         val len = buf.getInt()
@@ -1401,16 +1582,38 @@ public object FfiConverterMapStringSequenceString : FfiConverterRustBuffer<Map<k
     }
 }
 
+fun `fromEthereumInputs`(`inputs`: List<kotlin.String>): kotlin.ByteArray =
+    FfiConverterByteArray.lift(
+        uniffiRustCall { _status ->
+            UniffiLib.INSTANCE.uniffi_mopro_bindings_fn_func_from_ethereum_inputs(
+                FfiConverterSequenceString.lower(`inputs`),
+                _status,
+            )
+        },
+    )
+
+fun `fromEthereumProof`(`proof`: ProofCalldata): kotlin.ByteArray =
+    FfiConverterByteArray.lift(
+        uniffiRustCall { _status ->
+            UniffiLib.INSTANCE.uniffi_mopro_bindings_fn_func_from_ethereum_proof(
+                FfiConverterTypeProofCalldata.lower(`proof`),
+                _status,
+            )
+        },
+    )
+
 @Throws(MoproException::class)
 fun `generateCircomProof`(
     `zkeyPath`: kotlin.String,
-    `circuitInputs`: Map<kotlin.String, List<kotlin.String>>,
+    `circuitInputs`: kotlin.String,
+    `proofLib`: ProofLib,
 ): GenerateProofResult =
     FfiConverterTypeGenerateProofResult.lift(
         uniffiRustCallWithError(MoproException) { _status ->
             UniffiLib.INSTANCE.uniffi_mopro_bindings_fn_func_generate_circom_proof(
                 FfiConverterString.lower(`zkeyPath`),
-                FfiConverterMapStringSequenceString.lower(`circuitInputs`),
+                FfiConverterString.lower(`circuitInputs`),
+                FfiConverterTypeProofLib.lower(`proofLib`),
                 _status,
             )
         },
@@ -1458,6 +1661,7 @@ fun `verifyCircomProof`(
     `zkeyPath`: kotlin.String,
     `proof`: kotlin.ByteArray,
     `publicInput`: kotlin.ByteArray,
+    `proofLib`: ProofLib,
 ): kotlin.Boolean =
     FfiConverterBoolean.lift(
         uniffiRustCallWithError(MoproException) { _status ->
@@ -1465,6 +1669,7 @@ fun `verifyCircomProof`(
                 FfiConverterString.lower(`zkeyPath`),
                 FfiConverterByteArray.lower(`proof`),
                 FfiConverterByteArray.lower(`publicInput`),
+                FfiConverterTypeProofLib.lower(`proofLib`),
                 _status,
             )
         },

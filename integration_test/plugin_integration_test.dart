@@ -18,9 +18,7 @@ void main() {
   //TODO better test
   testWidgets('getPlatformVersion test', (WidgetTester tester) async {
     final MoproFlutter plugin = MoproFlutter();
-    var inputs = <String, List<String>>{};
-    inputs["a"] = ["3"];
-    inputs["b"] = ["5"];
+    var inputs = "{\"a\":[\"3\"],\"b\":[\"5\"]}";
     final GenerateProofResult? proofResult =
         await plugin.generateProof("multiplier2_final.zkey", inputs);
     // The version string depends on the host platform running the test, so

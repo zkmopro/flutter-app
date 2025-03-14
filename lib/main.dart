@@ -101,9 +101,8 @@ class _MyAppState extends State<MyApp> {
                           // Platform messages may fail, so we use a try/catch PlatformException.
                           // We also handle the message potentially returning null.
                           try {
-                            var inputs = <String, List<String>>{};
-                            inputs["a"] = [_controllerA.text];
-                            inputs["b"] = [_controllerB.text];
+                            var inputs =
+                                '{"a":["${_controllerA.text}"],"b":["${_controllerB.text}"]}';
                             proofResult =
                                 await _moproFlutterPlugin.generateProof(
                                     "assets/multiplier2_final.zkey", inputs);

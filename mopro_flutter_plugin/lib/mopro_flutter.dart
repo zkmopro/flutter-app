@@ -24,7 +24,7 @@ class MoproFlutter {
   }
 
   Future<GenerateProofResult?> generateProof(
-      String zkeyFile, Map<String, List<String>> inputs) async {
+      String zkeyFile, String inputs) async {
     return await copyAssetToFileSystem(zkeyFile).then((path) async {
       return await MoproFlutterPlatform.instance.generateProof(path, inputs);
     });

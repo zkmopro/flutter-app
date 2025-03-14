@@ -14,7 +14,7 @@ public class MoproFlutterPlugin: NSObject, FlutterPlugin {
         case "generateProof":
             guard let args = call.arguments as? [String: Any],
                   let zkeyPath = args["zkeyPath"] as? String,
-                  let inputs = args["inputs"] as? [String: [String]]
+                  let inputs = args["inputs"] as? String
             else {
                 result(FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments", details: nil))
                 return
@@ -22,7 +22,7 @@ public class MoproFlutterPlugin: NSObject, FlutterPlugin {
 
             do {
                 // Call the function from mopro.swift
-                let proofResult = try generateCircomProof(zkeyPath: zkeyPath, circuitInputs: inputs)
+                let proofResult = try generateCircomProof(zkeyPath: zkeyPath, circuitInputs: inputs, proofLib: ProofLib.arkworks)
                 let proof = toEthereumProof(proof: proofResult.proof)
                 let convertedInputs = toEthereumInputs(inputs: proofResult.inputs)
                

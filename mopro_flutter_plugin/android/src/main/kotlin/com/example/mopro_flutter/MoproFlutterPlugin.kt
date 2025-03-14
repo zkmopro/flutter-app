@@ -12,7 +12,7 @@ import io.flutter.plugin.common.StandardMethodCodec
 import uniffi.mopro.ProofCalldata
 import uniffi.mopro.toEthereumInputs
 import uniffi.mopro.toEthereumProof
-
+import uniffi.mopro.ProofLib
 /** MoproFlutterPlugin */
 class MoproFlutterPlugin : FlutterPlugin, MethodCallHandler {
     /// The MethodChannel that will the communication between Flutter and native Android
@@ -39,13 +39,13 @@ class MoproFlutterPlugin : FlutterPlugin, MethodCallHandler {
             )
 
             val inputs =
-                call.argument<HashMap<String, List<String>>>("inputs") ?: return result.error(
+                call.argument<String>("inputs") ?: return result.error(
                     "ARGUMENT_ERROR",
                     "Missing inputs",
                     null
                 )
 
-            val res = generateCircomProof(zkeyPath, inputs)
+            val res = generateCircomProof(zkeyPath, inputs, ProofLib.ARKWORKS)
             val proof: ProofCalldata = toEthereumProof(res.proof)
             val convertedInputs: List<String> = toEthereumInputs(res.inputs)
 

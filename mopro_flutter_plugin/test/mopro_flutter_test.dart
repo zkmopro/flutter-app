@@ -10,7 +10,7 @@ class MockMoproFlutterPlatform
     implements MoproFlutterPlatform {
   @override
   Future<GenerateProofResult?> generateProof(
-          String zkeyPath, Map<String, List<String>> inputs) =>
+          String zkeyPath, String inputs) =>
       Future.value(GenerateProofResult(
         ProofCalldata(
           G1Point("1", "2"),
@@ -33,9 +33,7 @@ void main() {
     MockMoproFlutterPlatform fakePlatform = MockMoproFlutterPlatform();
     MoproFlutterPlatform.instance = fakePlatform;
 
-    var inputs = <String, List<String>>{};
-    inputs["a"] = ["3"];
-    inputs["b"] = ["5"];
+    var inputs = "{\"a\":[\"3\"],\"b\":[\"5\"]}";
     expect(
         await moproFlutterPlugin.generateProof(
             "multiplier2_final.zkey", inputs),

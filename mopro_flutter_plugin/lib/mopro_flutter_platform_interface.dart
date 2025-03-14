@@ -25,7 +25,7 @@ abstract class MoproFlutterPlatform extends PlatformInterface {
   }
 
   Future<GenerateProofResult?> generateProof(
-      String zkeyPath, Map<String, List<String>> inputs) {
+      String zkeyPath, String inputs) {
     throw UnimplementedError('generateProof() has not been implemented.');
   }
 }

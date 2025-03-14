@@ -12,7 +12,7 @@ class MethodChannelMoproFlutter extends MoproFlutterPlatform {
 
   @override
   Future<GenerateProofResult?> generateProof(
-      String zkeyPath, Map<String, List<String>> inputs) async {
+      String zkeyPath, String inputs) async {
     final proofResult = await methodChannel
         .invokeMethod<Map<Object?, Object?>>('generateProof', {
       'zkeyPath': zkeyPath,

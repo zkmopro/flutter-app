@@ -92,9 +92,7 @@ Follow the [Rust Setup steps from the MoPro official docs](https://zkmopro.org/d
 2. Load the new `.zkey` file properly in your Dart code. For example, update the file path in [`lib/main.dart`](lib/main.dart):
 
    ```dart
-   var inputs = <String, List<String>>{};
-   inputs["a"] = ["3"];
-   inputs["b"] = ["5"];
+   var inputs = "{\"a\":[\"3\"],\"b\":[\"5\"]}";
    proofResult = await _moproFlutterPlugin.generateProof("assets/multiplier2_final.zkey", inputs);
    ```
 

@@ -1,0 +1,2 @@
+**/libmopro_bindings.so filter=lfs diff=lfs merge=lfs -text
+**/libmopro_bindings.a filter=lfs diff=lfs merge=lfs -text

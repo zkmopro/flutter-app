@@ -26,7 +26,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  integration_test: d5929033778cc4991a187e4e1a85396fa4f59b3a
+  integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
   mopro_flutter: a741d671ffe61da76b7440af1ad138b923281f99
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
 

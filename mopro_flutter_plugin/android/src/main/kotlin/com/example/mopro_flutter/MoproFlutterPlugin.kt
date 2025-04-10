@@ -9,9 +9,7 @@ import io.flutter.plugin.common.MethodChannel.Result
 import uniffi.mopro.generateCircomProof
 
 import io.flutter.plugin.common.StandardMethodCodec
-import uniffi.mopro.ProofCalldata
-import uniffi.mopro.toEthereumInputs
-import uniffi.mopro.toEthereumProof
+import uniffi.mopro.CircomProof
 import uniffi.mopro.ProofLib
 /** MoproFlutterPlugin */
 class MoproFlutterPlugin : FlutterPlugin, MethodCallHandler {
@@ -46,8 +44,7 @@ class MoproFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 )
 
             val res = generateCircomProof(zkeyPath, inputs, ProofLib.ARKWORKS)
-            val proof: ProofCalldata = toEthereumProof(res.proof)
-            val convertedInputs: List<String> = toEthereumInputs(res.inputs)
+            val proof: CircomProof = res.proof
 
             val proofList = listOf(
                 mapOf(
@@ -65,7 +62,7 @@ class MoproFlutterPlugin : FlutterPlugin, MethodCallHandler {
             // Return the proof and inputs as a map supported by the StandardMethodCodec
             val resMap = mapOf(
                 "proof" to proofList,
-                "inputs" to convertedInputs
+                "inputs" to res.inputs
             )
 
             result.success(

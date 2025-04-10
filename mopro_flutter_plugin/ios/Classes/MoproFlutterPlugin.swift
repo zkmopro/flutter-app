@@ -23,8 +23,8 @@ public class MoproFlutterPlugin: NSObject, FlutterPlugin {
             do {
                 // Call the function from mopro.swift
                 let proofResult = try generateCircomProof(zkeyPath: zkeyPath, circuitInputs: inputs, proofLib: ProofLib.arkworks)
-                let proof = toEthereumProof(proof: proofResult.proof)
-                let convertedInputs = toEthereumInputs(inputs: proofResult.inputs)
+                let proof = proofResult.proof
+                let inputs = proofResult.inputs
                
                 let proofList: [[String: Any]] = [
                     ["x": proof.a.x, "y": proof.a.y],
@@ -34,7 +34,7 @@ public class MoproFlutterPlugin: NSObject, FlutterPlugin {
                 
                 let resMap: [String: Any] = [
                     "proof": proofList,
-                    "inputs": convertedInputs
+                    "inputs": inputs
                 ]
                 
                 // Return the proof and inputs as a map supported by the StandardMethodCodec

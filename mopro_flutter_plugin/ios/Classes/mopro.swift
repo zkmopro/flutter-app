@@ -481,15 +481,181 @@ fileprivate struct FfiConverterData: FfiConverterRustBuffer {
 }
 
 
-public struct G1 {
-    public var x: String
-    public var y: String
+public struct CircomProof {
+    public var a: G1
+    public var b: G2
+    public var c: G1
+    public var `protocol`: String
+    public var curve: String
 
     // Default memberwise initializers are never public by default, so we
     // declare one manually.
-    public init(x: String, y: String) {
+    public init(a: G1, b: G2, c: G1, `protocol`: String, curve: String) {
+        self.a = a
+        self.b = b
+        self.c = c
+        self.`protocol` = `protocol`
+        self.curve = curve
+    }
+}
+
+#if compiler(>=6)
+extension CircomProof: Sendable {}
+#endif
+
+
+extension CircomProof: Equatable, Hashable {
+    public static func ==(lhs: CircomProof, rhs: CircomProof) -> Bool {
+        if lhs.a != rhs.a {
+            return false
+        }
+        if lhs.b != rhs.b {
+            return false
+        }
+        if lhs.c != rhs.c {
+            return false
+        }
+        if lhs.`protocol` != rhs.`protocol` {
+            return false
+        }
+        if lhs.curve != rhs.curve {
+            return false
+        }
+        return true
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(a)
+        hasher.combine(b)
+        hasher.combine(c)
+        hasher.combine(`protocol`)
+        hasher.combine(curve)
+    }
+}
+
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeCircomProof: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> CircomProof {
+        return
+            try CircomProof(
+                a: FfiConverterTypeG1.read(from: &buf), 
+                b: FfiConverterTypeG2.read(from: &buf), 
+                c: FfiConverterTypeG1.read(from: &buf), 
+                protocol: FfiConverterString.read(from: &buf), 
+                curve: FfiConverterString.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: CircomProof, into buf: inout [UInt8]) {
+        FfiConverterTypeG1.write(value.a, into: &buf)
+        FfiConverterTypeG2.write(value.b, into: &buf)
+        FfiConverterTypeG1.write(value.c, into: &buf)
+        FfiConverterString.write(value.`protocol`, into: &buf)
+        FfiConverterString.write(value.curve, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeCircomProof_lift(_ buf: RustBuffer) throws -> CircomProof {
+    return try FfiConverterTypeCircomProof.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeCircomProof_lower(_ value: CircomProof) -> RustBuffer {
+    return FfiConverterTypeCircomProof.lower(value)
+}
+
+
+public struct CircomProofResult {
+    public var proof: CircomProof
+    public var inputs: [String]
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(proof: CircomProof, inputs: [String]) {
+        self.proof = proof
+        self.inputs = inputs
+    }
+}
+
+#if compiler(>=6)
+extension CircomProofResult: Sendable {}
+#endif
+
+
+extension CircomProofResult: Equatable, Hashable {
+    public static func ==(lhs: CircomProofResult, rhs: CircomProofResult) -> Bool {
+        if lhs.proof != rhs.proof {
+            return false
+        }
+        if lhs.inputs != rhs.inputs {
+            return false
+        }
+        return true
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(proof)
+        hasher.combine(inputs)
+    }
+}
+
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public struct FfiConverterTypeCircomProofResult: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> CircomProofResult {
+        return
+            try CircomProofResult(
+                proof: FfiConverterTypeCircomProof.read(from: &buf), 
+                inputs: FfiConverterSequenceString.read(from: &buf)
+        )
+    }
+
+    public static func write(_ value: CircomProofResult, into buf: inout [UInt8]) {
+        FfiConverterTypeCircomProof.write(value.proof, into: &buf)
+        FfiConverterSequenceString.write(value.inputs, into: &buf)
+    }
+}
+
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeCircomProofResult_lift(_ buf: RustBuffer) throws -> CircomProofResult {
+    return try FfiConverterTypeCircomProofResult.lift(buf)
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
+public func FfiConverterTypeCircomProofResult_lower(_ value: CircomProofResult) -> RustBuffer {
+    return FfiConverterTypeCircomProofResult.lower(value)
+}
+
+
+public struct G1 {
+    public var x: String
+    public var y: String
+    public var z: String
+
+    // Default memberwise initializers are never public by default, so we
+    // declare one manually.
+    public init(x: String, y: String, z: String) {
         self.x = x
         self.y = y
+        self.z = z
     }
 }
 
@@ -506,12 +672,16 @@ extension G1: Equatable, Hashable {
         if lhs.y != rhs.y {
             return false
         }
+        if lhs.z != rhs.z {
+            return false
+        }
         return true
     }
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(x)
         hasher.combine(y)
+        hasher.combine(z)
     }
 }
 
@@ -525,13 +695,15 @@ public struct FfiConverterTypeG1: FfiConverterRustBuffer {
         return
             try G1(
                 x: FfiConverterString.read(from: &buf), 
-                y: FfiConverterString.read(from: &buf)
+                y: FfiConverterString.read(from: &buf), 
+                z: FfiConverterString.read(from: &buf)
         )
     }
 
     public static func write(_ value: G1, into buf: inout [UInt8]) {
         FfiConverterString.write(value.x, into: &buf)
         FfiConverterString.write(value.y, into: &buf)
+        FfiConverterString.write(value.z, into: &buf)
     }
 }
 
@@ -554,12 +726,14 @@ public func FfiConverterTypeG1_lower(_ value: G1) -> RustBuffer {
 public struct G2 {
     public var x: [String]
     public var y: [String]
+    public var z: [String]
 
     // Default memberwise initializers are never public by default, so we
     // declare one manually.
-    public init(x: [String], y: [String]) {
+    public init(x: [String], y: [String], z: [String]) {
         self.x = x
         self.y = y
+        self.z = z
     }
 }
 
@@ -576,12 +750,16 @@ extension G2: Equatable, Hashable {
         if lhs.y != rhs.y {
             return false
         }
+        if lhs.z != rhs.z {
+            return false
+        }
         return true
     }
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(x)
         hasher.combine(y)
+        hasher.combine(z)
     }
 }
 
@@ -595,13 +773,15 @@ public struct FfiConverterTypeG2: FfiConverterRustBuffer {
         return
             try G2(
                 x: FfiConverterSequenceString.read(from: &buf), 
-                y: FfiConverterSequenceString.read(from: &buf)
+                y: FfiConverterSequenceString.read(from: &buf), 
+                z: FfiConverterSequenceString.read(from: &buf)
         )
     }
 
     public static func write(_ value: G2, into buf: inout [UInt8]) {
         FfiConverterSequenceString.write(value.x, into: &buf)
         FfiConverterSequenceString.write(value.y, into: &buf)
+        FfiConverterSequenceString.write(value.z, into: &buf)
     }
 }
 
@@ -621,7 +801,7 @@ public func FfiConverterTypeG2_lower(_ value: G2) -> RustBuffer {
 }
 
 
-public struct GenerateProofResult {
+public struct Halo2ProofResult {
     public var proof: Data
     public var inputs: Data
 
@@ -634,12 +814,12 @@ public struct GenerateProofResult {
 }
 
 #if compiler(>=6)
-extension GenerateProofResult: Sendable {}
+extension Halo2ProofResult: Sendable {}
 #endif
 
 
-extension GenerateProofResult: Equatable, Hashable {
-    public static func ==(lhs: GenerateProofResult, rhs: GenerateProofResult) -> Bool {
+extension Halo2ProofResult: Equatable, Hashable {
+    public static func ==(lhs: Halo2ProofResult, rhs: Halo2ProofResult) -> Bool {
         if lhs.proof != rhs.proof {
             return false
         }
@@ -660,16 +840,16 @@ extension GenerateProofResult: Equatable, Hashable {
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
-public struct FfiConverterTypeGenerateProofResult: FfiConverterRustBuffer {
-    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> GenerateProofResult {
+public struct FfiConverterTypeHalo2ProofResult: FfiConverterRustBuffer {
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> Halo2ProofResult {
         return
-            try GenerateProofResult(
+            try Halo2ProofResult(
                 proof: FfiConverterData.read(from: &buf), 
                 inputs: FfiConverterData.read(from: &buf)
         )
     }
 
-    public static func write(_ value: GenerateProofResult, into buf: inout [UInt8]) {
+    public static func write(_ value: Halo2ProofResult, into buf: inout [UInt8]) {
         FfiConverterData.write(value.proof, into: &buf)
         FfiConverterData.write(value.inputs, into: &buf)
     }
@@ -679,93 +859,15 @@ public struct FfiConverterTypeGenerateProofResult: FfiConverterRustBuffer {
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
-public func FfiConverterTypeGenerateProofResult_lift(_ buf: RustBuffer) throws -> GenerateProofResult {
-    return try FfiConverterTypeGenerateProofResult.lift(buf)
+public func FfiConverterTypeHalo2ProofResult_lift(_ buf: RustBuffer) throws -> Halo2ProofResult {
+    return try FfiConverterTypeHalo2ProofResult.lift(buf)
 }
 
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
-public func FfiConverterTypeGenerateProofResult_lower(_ value: GenerateProofResult) -> RustBuffer {
-    return FfiConverterTypeGenerateProofResult.lower(value)
-}
-
-
-public struct ProofCalldata {
-    public var a: G1
-    public var b: G2
-    public var c: G1
-
-    // Default memberwise initializers are never public by default, so we
-    // declare one manually.
-    public init(a: G1, b: G2, c: G1) {
-        self.a = a
-        self.b = b
-        self.c = c
-    }
-}
-
-#if compiler(>=6)
-extension ProofCalldata: Sendable {}
-#endif
-
-
-extension ProofCalldata: Equatable, Hashable {
-    public static func ==(lhs: ProofCalldata, rhs: ProofCalldata) -> Bool {
-        if lhs.a != rhs.a {
-            return false
-        }
-        if lhs.b != rhs.b {
-            return false
-        }
-        if lhs.c != rhs.c {
-            return false
-        }
-        return true
-    }
-
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(a)
-        hasher.combine(b)
-        hasher.combine(c)
-    }
-}
-
-
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public struct FfiConverterTypeProofCalldata: FfiConverterRustBuffer {
-    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> ProofCalldata {
-        return
-            try ProofCalldata(
-                a: FfiConverterTypeG1.read(from: &buf), 
-                b: FfiConverterTypeG2.read(from: &buf), 
-                c: FfiConverterTypeG1.read(from: &buf)
-        )
-    }
-
-    public static func write(_ value: ProofCalldata, into buf: inout [UInt8]) {
-        FfiConverterTypeG1.write(value.a, into: &buf)
-        FfiConverterTypeG2.write(value.b, into: &buf)
-        FfiConverterTypeG1.write(value.c, into: &buf)
-    }
-}
-
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public func FfiConverterTypeProofCalldata_lift(_ buf: RustBuffer) throws -> ProofCalldata {
-    return try FfiConverterTypeProofCalldata.lift(buf)
-}
-
-#if swift(>=5.8)
-@_documentation(visibility: private)
-#endif
-public func FfiConverterTypeProofCalldata_lower(_ value: ProofCalldata) -> RustBuffer {
-    return FfiConverterTypeProofCalldata.lower(value)
+public func FfiConverterTypeHalo2ProofResult_lower(_ value: Halo2ProofResult) -> RustBuffer {
+    return FfiConverterTypeHalo2ProofResult.lower(value)
 }
 
 
@@ -968,22 +1070,8 @@ fileprivate struct FfiConverterDictionaryStringSequenceString: FfiConverterRustB
         return dict
     }
 }
-public func fromEthereumInputs(inputs: [String]) -> Data  {
-    return try!  FfiConverterData.lift(try! rustCall() {
-    uniffi_mopro_bindings_fn_func_from_ethereum_inputs(
-        FfiConverterSequenceString.lower(inputs),$0
-    )
-})
-}
-public func fromEthereumProof(proof: ProofCalldata) -> Data  {
-    return try!  FfiConverterData.lift(try! rustCall() {
-    uniffi_mopro_bindings_fn_func_from_ethereum_proof(
-        FfiConverterTypeProofCalldata_lower(proof),$0
-    )
-})
-}
-public func generateCircomProof(zkeyPath: String, circuitInputs: String, proofLib: ProofLib)throws  -> GenerateProofResult  {
-    return try  FfiConverterTypeGenerateProofResult_lift(try rustCallWithError(FfiConverterTypeMoproError_lift) {
+public func generateCircomProof(zkeyPath: String, circuitInputs: String, proofLib: ProofLib)throws  -> CircomProofResult  {
+    return try  FfiConverterTypeCircomProofResult_lift(try rustCallWithError(FfiConverterTypeMoproError_lift) {
     uniffi_mopro_bindings_fn_func_generate_circom_proof(
         FfiConverterString.lower(zkeyPath),
         FfiConverterString.lower(circuitInputs),
@@ -991,8 +1079,8 @@ public func generateCircomProof(zkeyPath: String, circuitInputs: String, proofLi
     )
 })
 }
-public func generateHalo2Proof(srsPath: String, pkPath: String, circuitInputs: [String: [String]])throws  -> GenerateProofResult  {
-    return try  FfiConverterTypeGenerateProofResult_lift(try rustCallWithError(FfiConverterTypeMoproError_lift) {
+public func generateHalo2Proof(srsPath: String, pkPath: String, circuitInputs: [String: [String]])throws  -> Halo2ProofResult  {
+    return try  FfiConverterTypeHalo2ProofResult_lift(try rustCallWithError(FfiConverterTypeMoproError_lift) {
     uniffi_mopro_bindings_fn_func_generate_halo2_proof(
         FfiConverterString.lower(srsPath),
         FfiConverterString.lower(pkPath),
@@ -1000,26 +1088,11 @@ public func generateHalo2Proof(srsPath: String, pkPath: String, circuitInputs: [
     )
 })
 }
-public func toEthereumInputs(inputs: Data) -> [String]  {
-    return try!  FfiConverterSequenceString.lift(try! rustCall() {
-    uniffi_mopro_bindings_fn_func_to_ethereum_inputs(
-        FfiConverterData.lower(inputs),$0
-    )
-})
-}
-public func toEthereumProof(proof: Data) -> ProofCalldata  {
-    return try!  FfiConverterTypeProofCalldata_lift(try! rustCall() {
-    uniffi_mopro_bindings_fn_func_to_ethereum_proof(
-        FfiConverterData.lower(proof),$0
-    )
-})
-}
-public func verifyCircomProof(zkeyPath: String, proof: Data, publicInput: Data, proofLib: ProofLib)throws  -> Bool  {
+public func verifyCircomProof(zkeyPath: String, proofResult: CircomProofResult, proofLib: ProofLib)throws  -> Bool  {
     return try  FfiConverterBool.lift(try rustCallWithError(FfiConverterTypeMoproError_lift) {
     uniffi_mopro_bindings_fn_func_verify_circom_proof(
         FfiConverterString.lower(zkeyPath),
-        FfiConverterData.lower(proof),
-        FfiConverterData.lower(publicInput),
+        FfiConverterTypeCircomProofResult_lower(proofResult),
         FfiConverterTypeProofLib_lower(proofLib),$0
     )
 })
@@ -1050,25 +1123,13 @@ private let initializationResult: InitializationResult = {
     if bindings_contract_version != scaffolding_contract_version {
         return InitializationResult.contractVersionMismatch
     }
-    if (uniffi_mopro_bindings_checksum_func_from_ethereum_inputs() != 44693) {
+    if (uniffi_mopro_bindings_checksum_func_generate_circom_proof() != 1382) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_mopro_bindings_checksum_func_from_ethereum_proof() != 10) {
+    if (uniffi_mopro_bindings_checksum_func_generate_halo2_proof() != 28088) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_mopro_bindings_checksum_func_generate_circom_proof() != 57032) {
-        return InitializationResult.apiChecksumMismatch
-    }
-    if (uniffi_mopro_bindings_checksum_func_generate_halo2_proof() != 58744) {
-        return InitializationResult.apiChecksumMismatch
-    }
-    if (uniffi_mopro_bindings_checksum_func_to_ethereum_inputs() != 10288) {
-        return InitializationResult.apiChecksumMismatch
-    }
-    if (uniffi_mopro_bindings_checksum_func_to_ethereum_proof() != 23344) {
-        return InitializationResult.apiChecksumMismatch
-    }
-    if (uniffi_mopro_bindings_checksum_func_verify_circom_proof() != 51239) {
+    if (uniffi_mopro_bindings_checksum_func_verify_circom_proof() != 14151) {
         return InitializationResult.apiChecksumMismatch
     }
     if (uniffi_mopro_bindings_checksum_func_verify_halo2_proof() != 24562) {

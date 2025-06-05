@@ -204,6 +204,39 @@ class MoproFlutterPlugin : FlutterPlugin, MethodCallHandler {
 
             val res = verifyHalo2Proof(srsPath, vkPath, proof, inputs)
             result.success(res)
+        } else if (call.method== "generateNoirProof") {
+            val circuitPath = call.argument<String>("circuitPath") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing circuitPath",
+                null
+            )
+
+            val srsPath = call.argument<String>("srsPath") 
+
+            val inputs = call.argument<List<String>>("inputs") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing inputs",
+                null
+            )
+
+            val res = generateNoirProof(circuitPath, srsPath, inputs)
+            result.success(res)
+        } else if (call.method== "verifyNoirProof") {
+            val circuitPath = call.argument<String>("circuitPath") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing circuitPath",
+                null
+            )
+
+            val proof = call.argument<ByteArray>("proof") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing proof",
+                null
+            )
+
+            val res = verifyNoirProof(circuitPath, proof)
+            result.success(res)
+
         } else {
             result.notImplemented()
         }

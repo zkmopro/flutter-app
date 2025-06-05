@@ -1,7 +1,7 @@
 import Flutter
+import Foundation
 import UIKit
 import moproFFI
-import Foundation
 
 class FlutterG1 {
   let x: String
@@ -171,7 +171,8 @@ public class MoproFlutterPlugin: NSObject, FlutterPlugin {
       }
 
       do {
-        let proofResult = try generateHalo2Proof(srsPath: srsPath, pkPath: pkPath, circuitInputs: inputs)
+        let proofResult = try generateHalo2Proof(
+          srsPath: srsPath, pkPath: pkPath, circuitInputs: inputs)
         let resultMap = [
           "proof": proofResult.proof,
           "inputs": proofResult.inputs,
@@ -188,33 +189,92 @@ public class MoproFlutterPlugin: NSObject, FlutterPlugin {
       guard let args = call.arguments as? [String: Any],
         let srsPath = args["srsPath"] as? String
       else {
-        result(FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments srsPath", details: nil))
+        result(
+          FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments srsPath", details: nil))
         return
       }
 
       guard let args = call.arguments as? [String: Any],
         let vkPath = args["vkPath"] as? String
       else {
-        result(FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments vkPath", details: nil))
+        result(
+          FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments vkPath", details: nil))
         return
       }
 
       guard let args = call.arguments as? [String: Any],
         let proof = args["proof"] as? FlutterStandardTypedData
       else {
-        result(FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments proof", details: nil))
+        result(
+          FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments proof", details: nil))
         return
       }
 
       guard let args = call.arguments as? [String: Any],
         let inputs = args["inputs"] as? FlutterStandardTypedData
       else {
-        result(FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments inputs", details: nil))
+        result(
+          FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments inputs", details: nil))
         return
       }
 
       do {
-        let valid = try verifyHalo2Proof(srsPath: srsPath, vkPath: vkPath, proof: proof.data, publicInput: inputs.data)
+        let valid = try verifyHalo2Proof(
+          srsPath: srsPath, vkPath: vkPath, proof: proof.data, publicInput: inputs.data)
+        result(valid)
+      } catch {
+        result(
+          FlutterError(
+            code: "PROOF_VERIFICATION_ERROR", message: "Failed to verify proof",
+            details: error.localizedDescription))
+      }
+    case "generateNoirProof":
+      guard let args = call.arguments as? [String: Any],
+        let circuitPath = args["circuitPath"] as? String
+      else {
+        result(FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments", details: nil))
+        return
+      }
+
+      let srsPath = args["srsPath"] as? String
+
+      guard let args = call.arguments as? [String: Any],
+        let inputs = args["inputs"] as? [String]
+      else {
+        result(
+          FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments inputs", details: nil))
+        return
+      }
+
+      do {
+        let proofResult = try generateNoirProof(
+          circuitPath: circuitPath, srsPath: srsPath, inputs: inputs)
+        result(proofResult)
+      } catch {
+        result(
+          FlutterError(
+            code: "PROOF_GENERATION_ERROR", message: "Failed to generate proof",
+            details: error.localizedDescription))
+      }
+
+    case "verifyNoirProof":
+      guard let args = call.arguments as? [String: Any],
+        let circuitPath = args["circuitPath"] as? String
+      else {
+        result(FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments", details: nil))
+        return
+      }
+
+      guard let args = call.arguments as? [String: Any],
+        let proof = args["proof"] as? FlutterStandardTypedData
+      else {
+        result(
+          FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments proof", details: nil))
+        return
+      }
+
+      do {
+        let valid = try verifyNoirProof(circuitPath: circuitPath, proof: proof.data)
         result(valid)
       } catch {
         result(

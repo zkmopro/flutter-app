@@ -42,4 +42,12 @@ abstract class MoproFlutterPlatform extends PlatformInterface {
   Future<bool> verifyHalo2Proof(String srsPath, String vkPath, Uint8List proof, Uint8List inputs) {
     throw UnimplementedError('verifyHalo2Proof() has not been implemented.');
   }
+
+  Future<Uint8List> generateNoirProof(String circuitPath, String? srsPath, List<String> inputs) {
+    throw UnimplementedError('generateNoirProof() has not been implemented.');
+  }
+
+  Future<bool> verifyNoirProof(String circuitPath, Uint8List proof) {
+    throw UnimplementedError('verifyNoirProof() has not been implemented.');
+  }
 }

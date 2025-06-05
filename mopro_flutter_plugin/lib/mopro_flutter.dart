@@ -23,10 +23,38 @@ class MoproFlutter {
     return file.path; // Return the file path
   }
 
-  Future<GenerateProofResult?> generateProof(
+  Future<CircomProofResult?> generateCircomProof(
       String zkeyFile, String inputs) async {
     return await copyAssetToFileSystem(zkeyFile).then((path) async {
-      return await MoproFlutterPlatform.instance.generateProof(path, inputs);
+      return await MoproFlutterPlatform.instance
+          .generateCircomProof(path, inputs);
+    });
+  }
+
+  Future<bool> verifyCircomProof(
+      String zkeyFile, CircomProofResult proof) async {
+    return await copyAssetToFileSystem(zkeyFile).then((path) async {
+      return await MoproFlutterPlatform.instance.verifyCircomProof(path, proof);
+    });
+  }
+
+  Future<Halo2ProofResult?> generateHalo2Proof(
+      String srsPath, String pkPath, Map<String, List<String>> inputs) async {
+    return await copyAssetToFileSystem(srsPath).then((srsPath) async {
+      return await copyAssetToFileSystem(pkPath).then((pkPath) async {
+        return await MoproFlutterPlatform.instance
+            .generateHalo2Proof(srsPath, pkPath, inputs);
+      });
+    });
+  }
+
+  Future<bool> verifyHalo2Proof(
+      String srsPath, String vkPath, Uint8List proof, Uint8List inputs) async {
+    return await copyAssetToFileSystem(srsPath).then((srsPath) async {
+      return await copyAssetToFileSystem(vkPath).then((vkPath) async {
+        return await MoproFlutterPlatform.instance
+            .verifyHalo2Proof(srsPath, vkPath, proof, inputs);
+      });
     });
   }
 }

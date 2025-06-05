@@ -27,6 +27,6 @@ void main() {
     var inputs = <String, List<String>>{};
     inputs["a"] = ["3"];
     inputs["b"] = ["5"];
-    expect(await platform.generateProof("zkey", inputs), '42');
+    expect(await platform.generateCircomProof("zkey", inputs), '42');
   });
 }

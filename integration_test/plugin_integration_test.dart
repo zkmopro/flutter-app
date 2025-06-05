@@ -19,8 +19,8 @@ void main() {
   testWidgets('getPlatformVersion test', (WidgetTester tester) async {
     final MoproFlutter plugin = MoproFlutter();
     var inputs = "{\"a\":[\"3\"],\"b\":[\"5\"]}";
-    final GenerateProofResult? proofResult =
-        await plugin.generateProof("multiplier2_final.zkey", inputs);
+    final CircomProofResult? proofResult =
+        await plugin.generateCircomProof("multiplier2_final.zkey", inputs);
     // The version string depends on the host platform running the test, so
     // just assert that some non-empty string is returned.
     expect(proofResult, isNotNull);

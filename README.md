@@ -93,7 +93,7 @@ Follow the [Rust Setup steps from the MoPro official docs](https://zkmopro.org/d
 
    ```dart
    var inputs = "{\"a\":[\"3\"],\"b\":[\"5\"]}";
-   proofResult = await _moproFlutterPlugin.generateProof("assets/multiplier2_final.zkey", inputs);
+   proofResult = await _moproFlutterPlugin.generateCircomProof("assets/multiplier2_final.zkey", inputs);
    ```
 
 Don't forget to modify the input values for your specific case!

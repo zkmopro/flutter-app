@@ -9,9 +9,9 @@ class MockMoproFlutterPlatform
     with MockPlatformInterfaceMixin
     implements MoproFlutterPlatform {
   @override
-  Future<GenerateProofResult?> generateProof(
+  Future<CircomProofResult?> generateCircomProof(
           String zkeyPath, String inputs) =>
-      Future.value(GenerateProofResult(
+      Future.value(CircomProofResult(
         ProofCalldata(
           G1Point("1", "2"),
           G2Point(["1", "2"], ["3", "4"]),
@@ -35,9 +35,9 @@ void main() {
 
     var inputs = "{\"a\":[\"3\"],\"b\":[\"5\"]}";
     expect(
-        await moproFlutterPlugin.generateProof(
+        await moproFlutterPlugin.generateCircomProof(
             "multiplier2_final.zkey", inputs),
-        GenerateProofResult(
+        CircomProofResult(
           ProofCalldata(
             G1Point("1", "2"),
             G2Point(["1", "2"], ["3", "4"]),

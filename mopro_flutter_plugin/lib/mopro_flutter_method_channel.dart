@@ -11,10 +11,10 @@ class MethodChannelMoproFlutter extends MoproFlutterPlatform {
   final methodChannel = const MethodChannel('mopro_flutter');
 
   @override
-  Future<GenerateProofResult?> generateProof(
+  Future<CircomProofResult?> generateCircomProof(
       String zkeyPath, String inputs) async {
     final proofResult = await methodChannel
-        .invokeMethod<Map<Object?, Object?>>('generateProof', {
+        .invokeMethod<Map<Object?, Object?>>('generateCircomProof', {
       'zkeyPath': zkeyPath,
       'inputs': inputs,
     });
@@ -23,8 +23,17 @@ class MethodChannelMoproFlutter extends MoproFlutterPlatform {
       return null;
     }
 
-    var generateProofResult = GenerateProofResult.fromMap(proofResult);
+    var circomProofResult = CircomProofResult.fromMap(proofResult);
 
-    return generateProofResult;
+    return circomProofResult;
+  }
+
+  @override
+  Future<bool> verifyCircomProof(String zkeyPath, CircomProofResult proof) async {
+    final result = await methodChannel.invokeMethod<bool>('verifyCircomProof', {
+      'zkeyPath': zkeyPath,
+      'proof': proof.toMap(),
+    });
+    return result ?? false;
   }
 }

@@ -24,8 +24,12 @@ abstract class MoproFlutterPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<GenerateProofResult?> generateProof(
+  Future<CircomProofResult?> generateCircomProof(
       String zkeyPath, String inputs) {
-    throw UnimplementedError('generateProof() has not been implemented.');
+    throw UnimplementedError('generateCircomProof() has not been implemented.');
+  }
+
+  Future<bool> verifyCircomProof(String zkeyPath, CircomProofResult proof) {
+    throw UnimplementedError('verifyCircomProof() has not been implemented.');
   }
 }

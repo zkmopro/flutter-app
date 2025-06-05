@@ -23,10 +23,16 @@ class MoproFlutter {
     return file.path; // Return the file path
   }
 
-  Future<GenerateProofResult?> generateProof(
+  Future<CircomProofResult?> generateCircomProof(
       String zkeyFile, String inputs) async {
     return await copyAssetToFileSystem(zkeyFile).then((path) async {
-      return await MoproFlutterPlatform.instance.generateProof(path, inputs);
+      return await MoproFlutterPlatform.instance.generateCircomProof(path, inputs);
+    });
+  }
+
+  Future<bool> verifyCircomProof(String zkeyFile, CircomProofResult proof) async {
+    return await copyAssetToFileSystem(zkeyFile).then((path) async {
+      return await MoproFlutterPlatform.instance.verifyCircomProof(path, proof);
     });
   }
 }

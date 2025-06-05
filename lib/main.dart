@@ -16,7 +16,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  GenerateProofResult? _proofResult;
+  CircomProofResult? _proofResult;
+  bool? _valid;
   final _moproFlutterPlugin = MoproFlutter();
   bool isProving = false;
   PlatformException? _error;
@@ -39,6 +40,7 @@ class _MyAppState extends State<MyApp> {
     // The proof is a base64 string
     var proof = _proofResult?.proof ?? "";
     // Decode the proof and inputs to see the actual values
+    var valid = _valid ?? false;
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -96,7 +98,7 @@ class _MyAppState extends State<MyApp> {
                           });
 
                           FocusManager.instance.primaryFocus?.unfocus();
-                          GenerateProofResult? proofResult;
+                          CircomProofResult? proofResult;
                           PlatformException? error;
                           // Platform messages may fail, so we use a try/catch PlatformException.
                           // We also handle the message potentially returning null.
@@ -104,7 +106,7 @@ class _MyAppState extends State<MyApp> {
                             var inputs =
                                 '{"a":["${_controllerA.text}"],"b":["${_controllerB.text}"]}';
                             proofResult =
-                                await _moproFlutterPlugin.generateProof(
+                                await _moproFlutterPlugin.generateCircomProof(
                                     "assets/multiplier2_final.zkey", inputs);
                             setState(() {
                               isProving = false;
@@ -129,11 +131,58 @@ class _MyAppState extends State<MyApp> {
                           "Generate Proof",
                         )),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: OutlinedButton(
+                        onPressed: () async {
+                          if (_controllerA.text.isEmpty ||
+                              _controllerB.text.isEmpty ||
+                              isProving) {
+                            return;
+                          }
+                          setState(() {
+                            isProving = true;
+                          });
+
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          bool? valid;
+                          // Platform messages may fail, so we use a try/catch PlatformException.
+                          // We also handle the message potentially returning null.
+                          try {
+                            var proofResult = _proofResult;
+                            valid = await _moproFlutterPlugin.verifyCircomProof(
+                                "assets/multiplier2_final.zkey", proofResult!);
+                            setState(() {
+                              isProving = false;
+                              _valid = valid;
+                            });
+                          } on PlatformException catch (e) {
+                            print("Error: $e");
+                            valid = false;
+                          }
+
+                          // If the widget was removed from the tree while the asynchronous platform
+                          // message was in flight, we want to discard the reply rather than calling
+                          // setState to update our non-existent appearance.
+                          if (!mounted) return;
+
+                          setState(() {
+                            _valid = valid;
+                          });
+                        },
+                        child: const Text(
+                          "Verify Proof",
+                        )),
+                  ),
                 ],
               ),
               if (_proofResult != null)
                 Column(
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('Proof is valid: $valid'),
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text('Proof inputs: $inputs'),

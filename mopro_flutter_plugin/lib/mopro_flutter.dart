@@ -57,4 +57,22 @@ class MoproFlutter {
       });
     });
   }
+
+  Future<Uint8List> generateNoirProof(String circuitPath, String? srsPath, List<String> inputs) async {
+    return await copyAssetToFileSystem(circuitPath).then((circuitPath) async {
+      if (srsPath != null) {
+        return await copyAssetToFileSystem(srsPath).then((srsPath) async {
+          return await MoproFlutterPlatform.instance.generateNoirProof(circuitPath, srsPath, inputs);
+        });
+      } else {
+        return await MoproFlutterPlatform.instance.generateNoirProof(circuitPath, null, inputs);
+      }
+    });
+  }
+
+  Future<bool> verifyNoirProof(String circuitPath, Uint8List proof) async {
+    return await copyAssetToFileSystem(circuitPath).then((circuitPath) async {  
+      return await MoproFlutterPlatform.instance.verifyNoirProof(circuitPath, proof);
+    });
+  }
 }

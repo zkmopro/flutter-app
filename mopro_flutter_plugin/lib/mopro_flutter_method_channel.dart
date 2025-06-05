@@ -64,4 +64,23 @@ class MethodChannelMoproFlutter extends MoproFlutterPlatform {
     });
     return result ?? false;
   }
+
+  @override
+  Future<Uint8List> generateNoirProof(String circuitPath, String? srsPath, List<String> inputs) async {
+    final result = await methodChannel.invokeMethod<Uint8List>('generateNoirProof', {
+      'circuitPath': circuitPath,
+      'srsPath': srsPath,
+      'inputs': inputs,
+    });
+    return result ?? Uint8List(0);
+  }
+
+  @override
+  Future<bool> verifyNoirProof(String circuitPath, Uint8List proof) async {
+    final result = await methodChannel.invokeMethod<bool>('verifyNoirProof', {
+      'circuitPath': circuitPath,
+      'proof': proof,
+    });
+    return result ?? false;
+  }
 }

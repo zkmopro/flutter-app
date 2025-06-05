@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:mopro_flutter/mopro_types.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
@@ -31,5 +33,13 @@ abstract class MoproFlutterPlatform extends PlatformInterface {
 
   Future<bool> verifyCircomProof(String zkeyPath, CircomProofResult proof) {
     throw UnimplementedError('verifyCircomProof() has not been implemented.');
+  }
+
+  Future<Halo2ProofResult?> generateHalo2Proof(String srsPath, String pkPath, Map<String, List<String>> inputs) {
+    throw UnimplementedError('generateHalo2Proof() has not been implemented.');
+  }
+
+  Future<bool> verifyHalo2Proof(String srsPath, String vkPath, Uint8List proof, Uint8List inputs) {
+    throw UnimplementedError('verifyHalo2Proof() has not been implemented.');
   }
 }

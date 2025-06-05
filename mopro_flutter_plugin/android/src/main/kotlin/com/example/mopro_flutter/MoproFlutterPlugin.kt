@@ -6,15 +6,9 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
-import uniffi.mopro.generateCircomProof
+import uniffi.mopro.*
 
 import io.flutter.plugin.common.StandardMethodCodec
-import uniffi.mopro.CircomProof
-import uniffi.mopro.ProofLib
-import uniffi.mopro.verifyCircomProof
-import uniffi.mopro.CircomProofResult
-import uniffi.mopro.G1
-import uniffi.mopro.G2
 
 class FlutterG1(x: String, y: String, z: String) {
     val x = x
@@ -157,6 +151,59 @@ class MoproFlutterPlugin : FlutterPlugin, MethodCallHandler {
             val res = verifyCircomProof(zkeyPath, circomProofResult, ProofLib.ARKWORKS)
             result.success(res)
 
+        } else if (call.method== "generateHalo2Proof") {
+            val srsPath = call.argument<String>("srsPath") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing srsPath",
+                null
+            )
+
+            val pkPath = call.argument<String>("pkPath") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing pkPath",
+                null
+            )
+
+            val inputs = call.argument<Map<String, List<String>>>("inputs") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing inputs",
+                null
+            )
+
+            val res = generateHalo2Proof(srsPath, pkPath, inputs)
+            val resultMap = mapOf(
+                "proof" to res.proof,
+                "inputs" to res.inputs
+            )
+
+            result.success(resultMap)
+        } else if (call.method== "verifyHalo2Proof") {
+            val srsPath = call.argument<String>("srsPath") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing srsPath",
+                null
+            )
+
+            val vkPath = call.argument<String>("vkPath") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing vkPath",
+                null
+            )
+
+            val proof = call.argument<ByteArray>("proof") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing proof",
+                null
+            )
+
+            val inputs = call.argument<ByteArray>("inputs") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing inputs",
+                null
+            )
+
+            val res = verifyHalo2Proof(srsPath, vkPath, proof, inputs)
+            result.success(res)
         } else {
             result.notImplemented()
         }

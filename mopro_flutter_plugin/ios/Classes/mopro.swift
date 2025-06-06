@@ -25,13 +25,13 @@ fileprivate extension RustBuffer {
     }
 
     static func from(_ ptr: UnsafeBufferPointer<UInt8>) -> RustBuffer {
-        try! rustCall { ffi_mopro_bindings_rustbuffer_from_bytes(ForeignBytes(bufferPointer: ptr), $0) }
+        try! rustCall { ffi_mopro_example_app_rustbuffer_from_bytes(ForeignBytes(bufferPointer: ptr), $0) }
     }
 
     // Frees the buffer in place.
     // The buffer must not be used after this is called.
     func deallocate() {
-        try! rustCall { ffi_mopro_bindings_rustbuffer_free(self, $0) }
+        try! rustCall { ffi_mopro_example_app_rustbuffer_free(self, $0) }
     }
 }
 
@@ -281,7 +281,7 @@ private func makeRustCall<T, E: Swift.Error>(
     _ callback: (UnsafeMutablePointer<RustCallStatus>) -> T,
     errorHandler: ((RustBuffer) throws -> E)?
 ) throws -> T {
-    uniffiEnsureMoproBindingsInitialized()
+    uniffiEnsureMoproExampleAppInitialized()
     var callStatus = RustCallStatus.init()
     let returnedVal = callback(&callStatus)
     try uniffiCheckCallStatus(callStatus: callStatus, errorHandler: errorHandler)
@@ -879,6 +879,8 @@ public enum MoproError {
     )
     case Halo2Error(String
     )
+    case NoirError(String
+    )
 }
 
 
@@ -901,6 +903,9 @@ public struct FfiConverterTypeMoproError: FfiConverterRustBuffer {
         case 2: return .Halo2Error(
             try FfiConverterString.read(from: &buf)
             )
+        case 3: return .NoirError(
+            try FfiConverterString.read(from: &buf)
+            )
 
          default: throw UniffiInternalError.unexpectedEnumCase
         }
@@ -920,6 +925,11 @@ public struct FfiConverterTypeMoproError: FfiConverterRustBuffer {
         
         case let .Halo2Error(v1):
             writeInt(&buf, Int32(2))
+            FfiConverterString.write(v1, into: &buf)
+            
+        
+        case let .NoirError(v1):
+            writeInt(&buf, Int32(3))
             FfiConverterString.write(v1, into: &buf)
             
         }
@@ -1023,6 +1033,30 @@ extension ProofLib: Equatable, Hashable {}
 #if swift(>=5.8)
 @_documentation(visibility: private)
 #endif
+fileprivate struct FfiConverterOptionString: FfiConverterRustBuffer {
+    typealias SwiftType = String?
+
+    public static func write(_ value: SwiftType, into buf: inout [UInt8]) {
+        guard let value = value else {
+            writeInt(&buf, Int8(0))
+            return
+        }
+        writeInt(&buf, Int8(1))
+        FfiConverterString.write(value, into: &buf)
+    }
+
+    public static func read(from buf: inout (data: Data, offset: Data.Index)) throws -> SwiftType {
+        switch try readInt(&buf) as Int8 {
+        case 0: return nil
+        case 1: return try FfiConverterString.read(from: &buf)
+        default: throw UniffiInternalError.unexpectedOptionalTag
+        }
+    }
+}
+
+#if swift(>=5.8)
+@_documentation(visibility: private)
+#endif
 fileprivate struct FfiConverterSequenceString: FfiConverterRustBuffer {
     typealias SwiftType = [String]
 
@@ -1072,7 +1106,7 @@ fileprivate struct FfiConverterDictionaryStringSequenceString: FfiConverterRustB
 }
 public func generateCircomProof(zkeyPath: String, circuitInputs: String, proofLib: ProofLib)throws  -> CircomProofResult  {
     return try  FfiConverterTypeCircomProofResult_lift(try rustCallWithError(FfiConverterTypeMoproError_lift) {
-    uniffi_mopro_bindings_fn_func_generate_circom_proof(
+    uniffi_mopro_example_app_fn_func_generate_circom_proof(
         FfiConverterString.lower(zkeyPath),
         FfiConverterString.lower(circuitInputs),
         FfiConverterTypeProofLib_lower(proofLib),$0
@@ -1081,16 +1115,25 @@ public func generateCircomProof(zkeyPath: String, circuitInputs: String, proofLi
 }
 public func generateHalo2Proof(srsPath: String, pkPath: String, circuitInputs: [String: [String]])throws  -> Halo2ProofResult  {
     return try  FfiConverterTypeHalo2ProofResult_lift(try rustCallWithError(FfiConverterTypeMoproError_lift) {
-    uniffi_mopro_bindings_fn_func_generate_halo2_proof(
+    uniffi_mopro_example_app_fn_func_generate_halo2_proof(
         FfiConverterString.lower(srsPath),
         FfiConverterString.lower(pkPath),
         FfiConverterDictionaryStringSequenceString.lower(circuitInputs),$0
     )
 })
 }
+public func generateNoirProof(circuitPath: String, srsPath: String?, inputs: [String])throws  -> Data  {
+    return try  FfiConverterData.lift(try rustCallWithError(FfiConverterTypeMoproError_lift) {
+    uniffi_mopro_example_app_fn_func_generate_noir_proof(
+        FfiConverterString.lower(circuitPath),
+        FfiConverterOptionString.lower(srsPath),
+        FfiConverterSequenceString.lower(inputs),$0
+    )
+})
+}
 public func verifyCircomProof(zkeyPath: String, proofResult: CircomProofResult, proofLib: ProofLib)throws  -> Bool  {
     return try  FfiConverterBool.lift(try rustCallWithError(FfiConverterTypeMoproError_lift) {
-    uniffi_mopro_bindings_fn_func_verify_circom_proof(
+    uniffi_mopro_example_app_fn_func_verify_circom_proof(
         FfiConverterString.lower(zkeyPath),
         FfiConverterTypeCircomProofResult_lower(proofResult),
         FfiConverterTypeProofLib_lower(proofLib),$0
@@ -1099,11 +1142,19 @@ public func verifyCircomProof(zkeyPath: String, proofResult: CircomProofResult, 
 }
 public func verifyHalo2Proof(srsPath: String, vkPath: String, proof: Data, publicInput: Data)throws  -> Bool  {
     return try  FfiConverterBool.lift(try rustCallWithError(FfiConverterTypeMoproError_lift) {
-    uniffi_mopro_bindings_fn_func_verify_halo2_proof(
+    uniffi_mopro_example_app_fn_func_verify_halo2_proof(
         FfiConverterString.lower(srsPath),
         FfiConverterString.lower(vkPath),
         FfiConverterData.lower(proof),
         FfiConverterData.lower(publicInput),$0
+    )
+})
+}
+public func verifyNoirProof(circuitPath: String, proof: Data)throws  -> Bool  {
+    return try  FfiConverterBool.lift(try rustCallWithError(FfiConverterTypeMoproError_lift) {
+    uniffi_mopro_example_app_fn_func_verify_noir_proof(
+        FfiConverterString.lower(circuitPath),
+        FfiConverterData.lower(proof),$0
     )
 })
 }
@@ -1119,20 +1170,26 @@ private let initializationResult: InitializationResult = {
     // Get the bindings contract version from our ComponentInterface
     let bindings_contract_version = 29
     // Get the scaffolding contract version by calling the into the dylib
-    let scaffolding_contract_version = ffi_mopro_bindings_uniffi_contract_version()
+    let scaffolding_contract_version = ffi_mopro_example_app_uniffi_contract_version()
     if bindings_contract_version != scaffolding_contract_version {
         return InitializationResult.contractVersionMismatch
     }
-    if (uniffi_mopro_bindings_checksum_func_generate_circom_proof() != 1382) {
+    if (uniffi_mopro_example_app_checksum_func_generate_circom_proof() != 27552) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_mopro_bindings_checksum_func_generate_halo2_proof() != 28088) {
+    if (uniffi_mopro_example_app_checksum_func_generate_halo2_proof() != 12749) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_mopro_bindings_checksum_func_verify_circom_proof() != 14151) {
+    if (uniffi_mopro_example_app_checksum_func_generate_noir_proof() != 54039) {
         return InitializationResult.apiChecksumMismatch
     }
-    if (uniffi_mopro_bindings_checksum_func_verify_halo2_proof() != 24562) {
+    if (uniffi_mopro_example_app_checksum_func_verify_circom_proof() != 8858) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_mopro_example_app_checksum_func_verify_halo2_proof() != 24595) {
+        return InitializationResult.apiChecksumMismatch
+    }
+    if (uniffi_mopro_example_app_checksum_func_verify_noir_proof() != 57348) {
         return InitializationResult.apiChecksumMismatch
     }
 
@@ -1141,7 +1198,7 @@ private let initializationResult: InitializationResult = {
 
 // Make the ensure init function public so that other modules which have external type references to
 // our types can call it.
-public func uniffiEnsureMoproBindingsInitialized() {
+public func uniffiEnsureMoproExampleAppInitialized() {
     switch initializationResult {
     case .ok:
         break

@@ -65,7 +65,7 @@ open class RustBuffer : Structure() {
         internal fun alloc(size: ULong = 0UL) =
             uniffiRustCall { status ->
                 // Note: need to convert the size to a `Long` value to make this work with JVM.
-                UniffiLib.INSTANCE.ffi_mopro_bindings_rustbuffer_alloc(size.toLong(), status)
+                UniffiLib.INSTANCE.ffi_mopro_example_app_rustbuffer_alloc(size.toLong(), status)
             }.also {
                 if (it.data == null) {
                     throw RuntimeException("RustBuffer.alloc() returned null data pointer (size=$size)")
@@ -86,7 +86,7 @@ open class RustBuffer : Structure() {
 
         internal fun free(buf: RustBuffer.ByValue) =
             uniffiRustCall { status ->
-                UniffiLib.INSTANCE.ffi_mopro_bindings_rustbuffer_free(buf, status)
+                UniffiLib.INSTANCE.ffi_mopro_example_app_rustbuffer_free(buf, status)
             }
     }
 
@@ -401,7 +401,7 @@ private fun findLibraryName(componentName: String): String {
     if (libOverride != null) {
         return libOverride
     }
-    return "mopro_bindings"
+    return "mopro_example_app"
 }
 
 private inline fun <reified Lib : Library> loadIndirect(componentName: String): Lib =
@@ -764,15 +764,19 @@ internal interface UniffiForeignFutureCompleteVoid : com.sun.jna.Callback {
 // when the library is loaded.
 internal interface IntegrityCheckingUniffiLib : Library {
     // Integrity check functions only
-    fun uniffi_mopro_bindings_checksum_func_generate_circom_proof(): Short
+    fun uniffi_mopro_example_app_checksum_func_generate_circom_proof(): Short
 
-    fun uniffi_mopro_bindings_checksum_func_generate_halo2_proof(): Short
+    fun uniffi_mopro_example_app_checksum_func_generate_halo2_proof(): Short
 
-    fun uniffi_mopro_bindings_checksum_func_verify_circom_proof(): Short
+    fun uniffi_mopro_example_app_checksum_func_generate_noir_proof(): Short
 
-    fun uniffi_mopro_bindings_checksum_func_verify_halo2_proof(): Short
+    fun uniffi_mopro_example_app_checksum_func_verify_circom_proof(): Short
 
-    fun ffi_mopro_bindings_uniffi_contract_version(): Int
+    fun uniffi_mopro_example_app_checksum_func_verify_halo2_proof(): Short
+
+    fun uniffi_mopro_example_app_checksum_func_verify_noir_proof(): Short
+
+    fun ffi_mopro_example_app_uniffi_contract_version(): Int
 }
 
 // A JNA Library to expose the extern-C FFI definitions.
@@ -814,28 +818,35 @@ internal interface UniffiLib : Library {
     }
 
     // FFI functions
-    fun uniffi_mopro_bindings_fn_func_generate_circom_proof(
+    fun uniffi_mopro_example_app_fn_func_generate_circom_proof(
         `zkeyPath`: RustBuffer.ByValue,
         `circuitInputs`: RustBuffer.ByValue,
         `proofLib`: RustBuffer.ByValue,
         uniffi_out_err: UniffiRustCallStatus,
     ): RustBuffer.ByValue
 
-    fun uniffi_mopro_bindings_fn_func_generate_halo2_proof(
+    fun uniffi_mopro_example_app_fn_func_generate_halo2_proof(
         `srsPath`: RustBuffer.ByValue,
         `pkPath`: RustBuffer.ByValue,
         `circuitInputs`: RustBuffer.ByValue,
         uniffi_out_err: UniffiRustCallStatus,
     ): RustBuffer.ByValue
 
-    fun uniffi_mopro_bindings_fn_func_verify_circom_proof(
+    fun uniffi_mopro_example_app_fn_func_generate_noir_proof(
+        `circuitPath`: RustBuffer.ByValue,
+        `srsPath`: RustBuffer.ByValue,
+        `inputs`: RustBuffer.ByValue,
+        uniffi_out_err: UniffiRustCallStatus,
+    ): RustBuffer.ByValue
+
+    fun uniffi_mopro_example_app_fn_func_verify_circom_proof(
         `zkeyPath`: RustBuffer.ByValue,
         `proofResult`: RustBuffer.ByValue,
         `proofLib`: RustBuffer.ByValue,
         uniffi_out_err: UniffiRustCallStatus,
     ): Byte
 
-    fun uniffi_mopro_bindings_fn_func_verify_halo2_proof(
+    fun uniffi_mopro_example_app_fn_func_verify_halo2_proof(
         `srsPath`: RustBuffer.ByValue,
         `vkPath`: RustBuffer.ByValue,
         `proof`: RustBuffer.ByValue,
@@ -843,218 +854,224 @@ internal interface UniffiLib : Library {
         uniffi_out_err: UniffiRustCallStatus,
     ): Byte
 
-    fun ffi_mopro_bindings_rustbuffer_alloc(
+    fun uniffi_mopro_example_app_fn_func_verify_noir_proof(
+        `circuitPath`: RustBuffer.ByValue,
+        `proof`: RustBuffer.ByValue,
+        uniffi_out_err: UniffiRustCallStatus,
+    ): Byte
+
+    fun ffi_mopro_example_app_rustbuffer_alloc(
         `size`: Long,
         uniffi_out_err: UniffiRustCallStatus,
     ): RustBuffer.ByValue
 
-    fun ffi_mopro_bindings_rustbuffer_from_bytes(
+    fun ffi_mopro_example_app_rustbuffer_from_bytes(
         `bytes`: ForeignBytes.ByValue,
         uniffi_out_err: UniffiRustCallStatus,
     ): RustBuffer.ByValue
 
-    fun ffi_mopro_bindings_rustbuffer_free(
+    fun ffi_mopro_example_app_rustbuffer_free(
         `buf`: RustBuffer.ByValue,
         uniffi_out_err: UniffiRustCallStatus,
     ): Unit
 
-    fun ffi_mopro_bindings_rustbuffer_reserve(
+    fun ffi_mopro_example_app_rustbuffer_reserve(
         `buf`: RustBuffer.ByValue,
         `additional`: Long,
         uniffi_out_err: UniffiRustCallStatus,
     ): RustBuffer.ByValue
 
-    fun ffi_mopro_bindings_rust_future_poll_u8(
+    fun ffi_mopro_example_app_rust_future_poll_u8(
         `handle`: Long,
         `callback`: UniffiRustFutureContinuationCallback,
         `callbackData`: Long,
     ): Unit
 
-    fun ffi_mopro_bindings_rust_future_cancel_u8(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_cancel_u8(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_free_u8(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_free_u8(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_complete_u8(
+    fun ffi_mopro_example_app_rust_future_complete_u8(
         `handle`: Long,
         uniffi_out_err: UniffiRustCallStatus,
     ): Byte
 
-    fun ffi_mopro_bindings_rust_future_poll_i8(
+    fun ffi_mopro_example_app_rust_future_poll_i8(
         `handle`: Long,
         `callback`: UniffiRustFutureContinuationCallback,
         `callbackData`: Long,
     ): Unit
 
-    fun ffi_mopro_bindings_rust_future_cancel_i8(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_cancel_i8(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_free_i8(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_free_i8(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_complete_i8(
+    fun ffi_mopro_example_app_rust_future_complete_i8(
         `handle`: Long,
         uniffi_out_err: UniffiRustCallStatus,
     ): Byte
 
-    fun ffi_mopro_bindings_rust_future_poll_u16(
+    fun ffi_mopro_example_app_rust_future_poll_u16(
         `handle`: Long,
         `callback`: UniffiRustFutureContinuationCallback,
         `callbackData`: Long,
     ): Unit
 
-    fun ffi_mopro_bindings_rust_future_cancel_u16(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_cancel_u16(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_free_u16(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_free_u16(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_complete_u16(
+    fun ffi_mopro_example_app_rust_future_complete_u16(
         `handle`: Long,
         uniffi_out_err: UniffiRustCallStatus,
     ): Short
 
-    fun ffi_mopro_bindings_rust_future_poll_i16(
+    fun ffi_mopro_example_app_rust_future_poll_i16(
         `handle`: Long,
         `callback`: UniffiRustFutureContinuationCallback,
         `callbackData`: Long,
     ): Unit
 
-    fun ffi_mopro_bindings_rust_future_cancel_i16(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_cancel_i16(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_free_i16(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_free_i16(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_complete_i16(
+    fun ffi_mopro_example_app_rust_future_complete_i16(
         `handle`: Long,
         uniffi_out_err: UniffiRustCallStatus,
     ): Short
 
-    fun ffi_mopro_bindings_rust_future_poll_u32(
+    fun ffi_mopro_example_app_rust_future_poll_u32(
         `handle`: Long,
         `callback`: UniffiRustFutureContinuationCallback,
         `callbackData`: Long,
     ): Unit
 
-    fun ffi_mopro_bindings_rust_future_cancel_u32(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_cancel_u32(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_free_u32(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_free_u32(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_complete_u32(
+    fun ffi_mopro_example_app_rust_future_complete_u32(
         `handle`: Long,
         uniffi_out_err: UniffiRustCallStatus,
     ): Int
 
-    fun ffi_mopro_bindings_rust_future_poll_i32(
+    fun ffi_mopro_example_app_rust_future_poll_i32(
         `handle`: Long,
         `callback`: UniffiRustFutureContinuationCallback,
         `callbackData`: Long,
     ): Unit
 
-    fun ffi_mopro_bindings_rust_future_cancel_i32(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_cancel_i32(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_free_i32(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_free_i32(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_complete_i32(
+    fun ffi_mopro_example_app_rust_future_complete_i32(
         `handle`: Long,
         uniffi_out_err: UniffiRustCallStatus,
     ): Int
 
-    fun ffi_mopro_bindings_rust_future_poll_u64(
+    fun ffi_mopro_example_app_rust_future_poll_u64(
         `handle`: Long,
         `callback`: UniffiRustFutureContinuationCallback,
         `callbackData`: Long,
     ): Unit
 
-    fun ffi_mopro_bindings_rust_future_cancel_u64(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_cancel_u64(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_free_u64(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_free_u64(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_complete_u64(
+    fun ffi_mopro_example_app_rust_future_complete_u64(
         `handle`: Long,
         uniffi_out_err: UniffiRustCallStatus,
     ): Long
 
-    fun ffi_mopro_bindings_rust_future_poll_i64(
+    fun ffi_mopro_example_app_rust_future_poll_i64(
         `handle`: Long,
         `callback`: UniffiRustFutureContinuationCallback,
         `callbackData`: Long,
     ): Unit
 
-    fun ffi_mopro_bindings_rust_future_cancel_i64(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_cancel_i64(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_free_i64(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_free_i64(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_complete_i64(
+    fun ffi_mopro_example_app_rust_future_complete_i64(
         `handle`: Long,
         uniffi_out_err: UniffiRustCallStatus,
     ): Long
 
-    fun ffi_mopro_bindings_rust_future_poll_f32(
+    fun ffi_mopro_example_app_rust_future_poll_f32(
         `handle`: Long,
         `callback`: UniffiRustFutureContinuationCallback,
         `callbackData`: Long,
     ): Unit
 
-    fun ffi_mopro_bindings_rust_future_cancel_f32(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_cancel_f32(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_free_f32(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_free_f32(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_complete_f32(
+    fun ffi_mopro_example_app_rust_future_complete_f32(
         `handle`: Long,
         uniffi_out_err: UniffiRustCallStatus,
     ): Float
 
-    fun ffi_mopro_bindings_rust_future_poll_f64(
+    fun ffi_mopro_example_app_rust_future_poll_f64(
         `handle`: Long,
         `callback`: UniffiRustFutureContinuationCallback,
         `callbackData`: Long,
     ): Unit
 
-    fun ffi_mopro_bindings_rust_future_cancel_f64(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_cancel_f64(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_free_f64(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_free_f64(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_complete_f64(
+    fun ffi_mopro_example_app_rust_future_complete_f64(
         `handle`: Long,
         uniffi_out_err: UniffiRustCallStatus,
     ): Double
 
-    fun ffi_mopro_bindings_rust_future_poll_pointer(
+    fun ffi_mopro_example_app_rust_future_poll_pointer(
         `handle`: Long,
         `callback`: UniffiRustFutureContinuationCallback,
         `callbackData`: Long,
     ): Unit
 
-    fun ffi_mopro_bindings_rust_future_cancel_pointer(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_cancel_pointer(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_free_pointer(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_free_pointer(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_complete_pointer(
+    fun ffi_mopro_example_app_rust_future_complete_pointer(
         `handle`: Long,
         uniffi_out_err: UniffiRustCallStatus,
     ): Pointer
 
-    fun ffi_mopro_bindings_rust_future_poll_rust_buffer(
+    fun ffi_mopro_example_app_rust_future_poll_rust_buffer(
         `handle`: Long,
         `callback`: UniffiRustFutureContinuationCallback,
         `callbackData`: Long,
     ): Unit
 
-    fun ffi_mopro_bindings_rust_future_cancel_rust_buffer(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_cancel_rust_buffer(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_free_rust_buffer(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_free_rust_buffer(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_complete_rust_buffer(
+    fun ffi_mopro_example_app_rust_future_complete_rust_buffer(
         `handle`: Long,
         uniffi_out_err: UniffiRustCallStatus,
     ): RustBuffer.ByValue
 
-    fun ffi_mopro_bindings_rust_future_poll_void(
+    fun ffi_mopro_example_app_rust_future_poll_void(
         `handle`: Long,
         `callback`: UniffiRustFutureContinuationCallback,
         `callbackData`: Long,
     ): Unit
 
-    fun ffi_mopro_bindings_rust_future_cancel_void(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_cancel_void(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_free_void(`handle`: Long): Unit
+    fun ffi_mopro_example_app_rust_future_free_void(`handle`: Long): Unit
 
-    fun ffi_mopro_bindings_rust_future_complete_void(
+    fun ffi_mopro_example_app_rust_future_complete_void(
         `handle`: Long,
         uniffi_out_err: UniffiRustCallStatus,
     ): Unit
@@ -1064,7 +1081,7 @@ private fun uniffiCheckContractApiVersion(lib: IntegrityCheckingUniffiLib) {
     // Get the bindings contract version from our ComponentInterface
     val bindings_contract_version = 29
     // Get the scaffolding contract version by calling the into the dylib
-    val scaffolding_contract_version = lib.ffi_mopro_bindings_uniffi_contract_version()
+    val scaffolding_contract_version = lib.ffi_mopro_example_app_uniffi_contract_version()
     if (bindings_contract_version != scaffolding_contract_version) {
         throw RuntimeException("UniFFI contract version mismatch: try cleaning and rebuilding your project")
     }
@@ -1072,16 +1089,22 @@ private fun uniffiCheckContractApiVersion(lib: IntegrityCheckingUniffiLib) {
 
 @Suppress("UNUSED_PARAMETER")
 private fun uniffiCheckApiChecksums(lib: IntegrityCheckingUniffiLib) {
-    if (lib.uniffi_mopro_bindings_checksum_func_generate_circom_proof() != 1382.toShort()) {
+    if (lib.uniffi_mopro_example_app_checksum_func_generate_circom_proof() != 27552.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_mopro_bindings_checksum_func_generate_halo2_proof() != 28088.toShort()) {
+    if (lib.uniffi_mopro_example_app_checksum_func_generate_halo2_proof() != 12749.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_mopro_bindings_checksum_func_verify_circom_proof() != 14151.toShort()) {
+    if (lib.uniffi_mopro_example_app_checksum_func_generate_noir_proof() != 54039.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
-    if (lib.uniffi_mopro_bindings_checksum_func_verify_halo2_proof() != 24562.toShort()) {
+    if (lib.uniffi_mopro_example_app_checksum_func_verify_circom_proof() != 8858.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_mopro_example_app_checksum_func_verify_halo2_proof() != 24595.toShort()) {
+        throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
+    }
+    if (lib.uniffi_mopro_example_app_checksum_func_verify_noir_proof() != 57348.toShort()) {
         throw RuntimeException("UniFFI API checksum mismatch: try cleaning and rebuilding your project")
     }
 }
@@ -1436,6 +1459,13 @@ sealed class MoproException : kotlin.Exception() {
             get() = "v1=${ v1 }"
     }
 
+    class NoirException(
+        val v1: kotlin.String,
+    ) : MoproException() {
+        override val message
+            get() = "v1=${ v1 }"
+    }
+
     companion object ErrorHandler : UniffiRustCallStatusErrorHandler<MoproException> {
         override fun lift(error_buf: RustBuffer.ByValue): MoproException = FfiConverterTypeMoproError.lift(error_buf)
     }
@@ -1455,6 +1485,10 @@ public object FfiConverterTypeMoproError : FfiConverterRustBuffer<MoproException
                 MoproException.Halo2Exception(
                     FfiConverterString.read(buf),
                 )
+            3 ->
+                MoproException.NoirException(
+                    FfiConverterString.read(buf),
+                )
             else -> throw RuntimeException("invalid error enum value, something is very wrong!!")
         }
 
@@ -1466,6 +1500,11 @@ public object FfiConverterTypeMoproError : FfiConverterRustBuffer<MoproException
                     FfiConverterString.allocationSize(value.v1)
             )
             is MoproException.Halo2Exception -> (
+                // Add the size for the Int that specifies the variant plus the size needed for all fields
+                4UL +
+                    FfiConverterString.allocationSize(value.v1)
+            )
+            is MoproException.NoirException -> (
                 // Add the size for the Int that specifies the variant plus the size needed for all fields
                 4UL +
                     FfiConverterString.allocationSize(value.v1)
@@ -1484,6 +1523,11 @@ public object FfiConverterTypeMoproError : FfiConverterRustBuffer<MoproException
             }
             is MoproException.Halo2Exception -> {
                 buf.putInt(2)
+                FfiConverterString.write(value.v1, buf)
+                Unit
+            }
+            is MoproException.NoirException -> {
+                buf.putInt(3)
                 FfiConverterString.write(value.v1, buf)
                 Unit
             }
@@ -1517,6 +1561,38 @@ public object FfiConverterTypeProofLib : FfiConverterRustBuffer<ProofLib> {
         buf: ByteBuffer,
     ) {
         buf.putInt(value.ordinal + 1)
+    }
+}
+
+/**
+ * @suppress
+ */
+public object FfiConverterOptionalString : FfiConverterRustBuffer<kotlin.String?> {
+    override fun read(buf: ByteBuffer): kotlin.String? {
+        if (buf.get().toInt() == 0) {
+            return null
+        }
+        return FfiConverterString.read(buf)
+    }
+
+    override fun allocationSize(value: kotlin.String?): ULong {
+        if (value == null) {
+            return 1UL
+        } else {
+            return 1UL + FfiConverterString.allocationSize(value)
+        }
+    }
+
+    override fun write(
+        value: kotlin.String?,
+        buf: ByteBuffer,
+    ) {
+        if (value == null) {
+            buf.put(0)
+        } else {
+            buf.put(1)
+            FfiConverterString.write(value, buf)
+        }
     }
 }
 
@@ -1597,7 +1673,7 @@ fun `generateCircomProof`(
 ): CircomProofResult =
     FfiConverterTypeCircomProofResult.lift(
         uniffiRustCallWithError(MoproException) { _status ->
-            UniffiLib.INSTANCE.uniffi_mopro_bindings_fn_func_generate_circom_proof(
+            UniffiLib.INSTANCE.uniffi_mopro_example_app_fn_func_generate_circom_proof(
                 FfiConverterString.lower(`zkeyPath`),
                 FfiConverterString.lower(`circuitInputs`),
                 FfiConverterTypeProofLib.lower(`proofLib`),
@@ -1614,10 +1690,27 @@ fun `generateHalo2Proof`(
 ): Halo2ProofResult =
     FfiConverterTypeHalo2ProofResult.lift(
         uniffiRustCallWithError(MoproException) { _status ->
-            UniffiLib.INSTANCE.uniffi_mopro_bindings_fn_func_generate_halo2_proof(
+            UniffiLib.INSTANCE.uniffi_mopro_example_app_fn_func_generate_halo2_proof(
                 FfiConverterString.lower(`srsPath`),
                 FfiConverterString.lower(`pkPath`),
                 FfiConverterMapStringSequenceString.lower(`circuitInputs`),
+                _status,
+            )
+        },
+    )
+
+@Throws(MoproException::class)
+fun `generateNoirProof`(
+    `circuitPath`: kotlin.String,
+    `srsPath`: kotlin.String?,
+    `inputs`: List<kotlin.String>,
+): kotlin.ByteArray =
+    FfiConverterByteArray.lift(
+        uniffiRustCallWithError(MoproException) { _status ->
+            UniffiLib.INSTANCE.uniffi_mopro_example_app_fn_func_generate_noir_proof(
+                FfiConverterString.lower(`circuitPath`),
+                FfiConverterOptionalString.lower(`srsPath`),
+                FfiConverterSequenceString.lower(`inputs`),
                 _status,
             )
         },
@@ -1631,7 +1724,7 @@ fun `verifyCircomProof`(
 ): kotlin.Boolean =
     FfiConverterBoolean.lift(
         uniffiRustCallWithError(MoproException) { _status ->
-            UniffiLib.INSTANCE.uniffi_mopro_bindings_fn_func_verify_circom_proof(
+            UniffiLib.INSTANCE.uniffi_mopro_example_app_fn_func_verify_circom_proof(
                 FfiConverterString.lower(`zkeyPath`),
                 FfiConverterTypeCircomProofResult.lower(`proofResult`),
                 FfiConverterTypeProofLib.lower(`proofLib`),
@@ -1649,11 +1742,26 @@ fun `verifyHalo2Proof`(
 ): kotlin.Boolean =
     FfiConverterBoolean.lift(
         uniffiRustCallWithError(MoproException) { _status ->
-            UniffiLib.INSTANCE.uniffi_mopro_bindings_fn_func_verify_halo2_proof(
+            UniffiLib.INSTANCE.uniffi_mopro_example_app_fn_func_verify_halo2_proof(
                 FfiConverterString.lower(`srsPath`),
                 FfiConverterString.lower(`vkPath`),
                 FfiConverterByteArray.lower(`proof`),
                 FfiConverterByteArray.lower(`publicInput`),
+                _status,
+            )
+        },
+    )
+
+@Throws(MoproException::class)
+fun `verifyNoirProof`(
+    `circuitPath`: kotlin.String,
+    `proof`: kotlin.ByteArray,
+): kotlin.Boolean =
+    FfiConverterBoolean.lift(
+        uniffiRustCallWithError(MoproException) { _status ->
+            UniffiLib.INSTANCE.uniffi_mopro_example_app_fn_func_verify_noir_proof(
+                FfiConverterString.lower(`circuitPath`),
+                FfiConverterByteArray.lower(`proof`),
                 _status,
             )
         },

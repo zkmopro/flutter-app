@@ -115,7 +115,8 @@ public class MoproFlutterPlugin: NSObject, FlutterPlugin {
     case "generateCircomProof":
       guard let args = call.arguments as? [String: Any],
         let zkeyPath = args["zkeyPath"] as? String,
-        let inputs = args["inputs"] as? String
+        let inputs = args["inputs"] as? String,
+        let proofLib = args["proofLib"] as? ProofLib
       else {
         result(FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments", details: nil))
         return
@@ -124,7 +125,7 @@ public class MoproFlutterPlugin: NSObject, FlutterPlugin {
       do {
         // Call the function from mopro.swift
         let proofResult = try generateCircomProof(
-          zkeyPath: zkeyPath, circuitInputs: inputs, proofLib: ProofLib.arkworks)
+          zkeyPath: zkeyPath, circuitInputs: inputs, proofLib: proofLib)
         let resultMap = convertCircomProof(res: proofResult)
 
         // Return the proof and inputs as a map supported by the StandardMethodCodec
@@ -139,7 +140,8 @@ public class MoproFlutterPlugin: NSObject, FlutterPlugin {
     case "verifyCircomProof":
       guard let args = call.arguments as? [String: Any],
         let zkeyPath = args["zkeyPath"] as? String,
-        let proof = args["proof"] as? [String: Any]
+        let proof = args["proof"] as? [String: Any],
+        let proofLib = args["proofLib"] as? ProofLib
       else {
         result(FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments", details: nil))
         return
@@ -149,7 +151,7 @@ public class MoproFlutterPlugin: NSObject, FlutterPlugin {
         let circomProofResult = convertCircomProofResult(proof: proof)
         // Call the function from mopro.swift
         let valid = try verifyCircomProof(
-          zkeyPath: zkeyPath, proofResult: circomProofResult, proofLib: ProofLib.arkworks)
+          zkeyPath: zkeyPath, proofResult: circomProofResult, proofLib: proofLib)
 
         // Return the proof and inputs as a map supported by the StandardMethodCodec
         result(valid)

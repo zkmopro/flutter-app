@@ -128,8 +128,16 @@ class MoproFlutterPlugin : FlutterPlugin, MethodCallHandler {
                     "Missing inputs",
                     null
                 )
+            
+            val proofLibIndex = call.argument<Int>("proofLib") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing proofLib",
+                null
+            )
 
-            val res = generateCircomProof(zkeyPath, inputs, ProofLib.ARKWORKS)
+            val proofLib = if (proofLibIndex == 0) ProofLib.ARKWORKS else ProofLib.RAPIDSNARK
+
+            val res = generateCircomProof(zkeyPath, inputs, proofLib)
             val resultMap = convertCircomProof(res)
 
             
@@ -147,8 +155,16 @@ class MoproFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 null
             )
 
+            val proofLibIndex = call.argument<Int>("proofLib") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing proofLib",
+                null
+            )
+
+            val proofLib = if (proofLibIndex == 0) ProofLib.ARKWORKS else ProofLib.RAPIDSNARK
+
             val circomProofResult = convertCircomProofResult(proof)
-            val res = verifyCircomProof(zkeyPath, circomProofResult, ProofLib.ARKWORKS)
+            val res = verifyCircomProof(zkeyPath, circomProofResult, proofLib)
             result.success(res)
 
         } else if (call.method== "generateHalo2Proof") {

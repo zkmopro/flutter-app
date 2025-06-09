@@ -109,7 +109,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                             '{"a":["${_controllerA.text}"],"b":["${_controllerB.text}"]}';
                         proofResult =
                             await _moproFlutterPlugin.generateCircomProof(
-                                "assets/multiplier2_final.zkey", inputs);
+                                "assets/multiplier2_final.zkey", inputs, ProofLib.arkworks);  // DO NOT change the proofLib if you don't build for rapidsnark
                       } on Exception catch (e) {
                         print("Error: $e");
                         proofResult = null;
@@ -146,7 +146,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                       try {
                         var proofResult = _circomProofResult;
                         valid = await _moproFlutterPlugin.verifyCircomProof(
-                            "assets/multiplier2_final.zkey", proofResult!);
+                            "assets/multiplier2_final.zkey", proofResult!, ProofLib.arkworks); // DO NOT change the proofLib if you don't build for rapidsnark
                       } on Exception catch (e) {
                         print("Error: $e");
                         valid = false;

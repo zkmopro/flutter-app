@@ -11,27 +11,27 @@ Flutter is a popular cross-platform mobile app development framework. Mopro Flut
 
 1. **Install Flutter**
 
-   If Flutter is not already installed, you can follow the [official Flutter installation guide](https://docs.flutter.dev/get-started/install) for your operating system.
+    If Flutter is not already installed, you can follow the [official Flutter installation guide](https://docs.flutter.dev/get-started/install) for your operating system.
 
 2. **Check Flutter Environment**
 
-   After installing Flutter, verify that your development environment is properly set up by running the following command in your terminal:
+    After installing Flutter, verify that your development environment is properly set up by running the following command in your terminal:
 
-   ```bash
-   flutter doctor
-   ```
+    ```bash
+    flutter doctor
+    ```
 
-   This command will identify any missing dependencies or required configurations.
+    This command will identify any missing dependencies or required configurations.
 
 3. **Install Flutter Dependencies**
 
-   Navigate to the root directory of the project in your terminal and run:
+    Navigate to the root directory of the project in your terminal and run:
 
-   ```bash
-   flutter pub get
-   ```
+    ```bash
+    flutter pub get
+    ```
 
-   This will install the necessary dependencies for the project.
+    This will install the necessary dependencies for the project.
 
 ### Running the App via VS Code
 
@@ -46,19 +46,19 @@ If you prefer using the terminal to run the app, use the following steps:
 
 1. For Android:
 
-   Ensure you have an Android emulator running or a device connected. Then run:
+    Ensure you have an Android emulator running or a device connected. Then run:
 
-   ```bash
-   flutter run
-   ```
+    ```bash
+    flutter run
+    ```
 
 2. For iOS:
 
-   Make sure you have an iOS simulator running or a device connected. Then run:
+    Make sure you have an iOS simulator running or a device connected. Then run:
 
-   ```bash
-   flutter run
-   ```
+    ```bash
+    flutter run
+    ```
 
 ## Integrating Your ZKP
 
@@ -74,27 +74,38 @@ Follow the [Rust Setup steps from the MoPro official docs](https://zkmopro.org/d
 
 1. Replace `mopro.swift` at [`mopro_flutter_plugin/ios/Classes/mopro.swift`](mopro_flutter_plugin/ios/Classes/mopro.swift) with the file generated during the [Setup](#setup).
 2. Replace the directory [`mopro_flutter_plugin/ios/MoproBindings.xcframework`](mopro_flutter_plugin/ios/MoproBindings.xcframework) with the one generated during the [Setup](#setup).
+3. Then define the native module API in [`mopro_flutter_plugin/ios/Classes/MoproFlutterPlugin.swift`](mopro_flutter_plugin/ios/Classes/MoproFlutterPlugin.swift) to match the Flutter type. Please refer to [Flutter - Data types support](https://docs.flutter.dev/platform-integration/platform-channels#codec)
 
 #### Android
 
 1. Replace the directory [`mopro_flutter_plugin/android/src/main/jniLibs`](mopro_flutter_plugin/android/src/main/jniLibs) with the one generated during the [Setup](#setup).
 2. Replace `mopro.kt` at [`mopro_flutter_plugin/android/src/main/kotlin/uniffi/mopro/mopro.kt`](mopro_flutter_plugin/android/src/main/kotlin/uniffi/mopro/mopro.kt) with the file generated during the [Setup](#setup).
+3. Then define the native module API in [`mopro_flutter_plugin/android/src/main/kotlin/com/example/mopro_flutter/MoproFlutterPlugin.kt`](mopro_flutter_plugin/android/src/main/kotlin/com/example/mopro_flutter/MoproFlutterPlugin.kt) to match the Flutter type. Please refer to [Flutter - Data types support](https://docs.flutter.dev/platform-integration/platform-channels#codec)
+
+### Flutter Module
+
+1.  Define Flutter's platform channel APIs to pass messages between Flutter and your desired platforms.
+
+-   [`mopro_flutter_plugin/lib/mopro_flutter_method_channel.dart`](mopro_flutter_plugin/lib/mopro_flutter_method_channel.dart)
+-   [`mopro_flutter_plugin/lib/mopro_flutter_platform_interface.dart`](mopro_flutter_plugin/lib/mopro_flutter_platform_interface.dart)
+-   [`mopro_flutter_plugin/lib/mopro_flutter.dart`](mopro_flutter_plugin/lib/mopro_flutter.dart)
+-   ([`mopro_flutter_plugin/lib/mopro_types.dart`](mopro_flutter_plugin/lib/mopro_types.dart))
 
 ### zKey
 
 1. Place your `.zkey` file in your app's assets folder. For example, to run the included example app, you need to replace the `.zkey` at [`assets/multiplier2_final.zkey`](assets/multiplier2_final.zkey) with your file. If you change the `.zkey` file name, don't forget to update the asset definition in your app's [`pubspec.yaml`](pubspec.yaml):
 
-   ```yaml
-   assets:
-     - assets/your_new_zkey_file.zkey
-   ```
+    ```yaml
+    assets:
+        - assets/your_new_zkey_file.zkey
+    ```
 
 2. Load the new `.zkey` file properly in your Dart code. For example, update the file path in [`lib/main.dart`](lib/main.dart):
 
-   ```dart
-   var inputs = "{\"a\":[\"3\"],\"b\":[\"5\"]}";
-   proofResult = await _moproFlutterPlugin.generateCircomProof("assets/multiplier2_final.zkey", inputs);
-   ```
+    ```dart
+    var inputs = "{\"a\":[\"3\"],\"b\":[\"5\"]}";
+    proofResult = await _moproFlutterPlugin.generateCircomProof("assets/multiplier2_final.zkey", inputs, ProofLib.arkworks);
+    ```
 
 Don't forget to modify the input values for your specific case!
 

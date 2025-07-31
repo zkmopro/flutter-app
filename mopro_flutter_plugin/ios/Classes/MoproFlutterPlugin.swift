@@ -1,7 +1,6 @@
 import Flutter
 import Foundation
 import UIKit
-import moproFFI
 
 class FlutterG1 {
   let x: String

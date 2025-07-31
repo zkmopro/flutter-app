@@ -114,3 +114,49 @@ Don't forget to modify the input values for your specific case!
 ### Android
 
 Open the `./android` directory in Android Studio. You will be able to browse to the plugin code in `Android` and `Project` view.
+
+## E2E Tests
+
+### End-to-End (E2E) / Integration Tests
+
+1. Start an emulator or simulator
+
+    - iOS: Open the iOS simulator via Xcode or `open -a Simulator`.
+
+    - Android: Launch an emulator using Android Studio or `emulator -avd <your_avd_name>`.
+        > [!NOTE]  
+        > If you encounter the error `command not found: emulator`, ensure the emulator binary is present in one of the following locations:
+        >
+        > - `~/Library/Android/sdk/emulator/emulator`
+        > - `~/Android/Sdk/emulator/emulator`
+        >
+        > To resolve this issue, update your shell configuration file (likely `~/.zshrc`) by adding the following lines:
+        >
+        > ```sh
+        > export ANDROID_SDK_ROOT=~/Library/Android/sdk
+        > export PATH=$PATH:$ANDROID_SDK_ROOT/emulator
+        > ```
+        >
+        > After making these changes, verify that the issue is resolved by running:
+        >
+        > ```sh
+        > emulator -list-avds
+        > ```
+
+2. Run the integration test
+
+```sh
+flutter test integration_test/plugin_integration_test.dart
+```
+
+> Make sure you're using a real or virtual device (not just a Dart VM), as integration tests require it.
+
+### Widget & Unit Tests
+
+To run unit and widget tests (headless, using Dart VM):
+
+```sh
+flutter test
+```
+
+These are ideal for testing individual widgets, business logic, and pure Dart code.

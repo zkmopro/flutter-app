@@ -116,16 +116,24 @@ public class MoproFlutterPlugin: NSObject, FlutterPlugin {
       guard let args = call.arguments as? [String: Any],
         let zkeyPath = args["zkeyPath"] as? String,
         let inputs = args["inputs"] as? String,
-        let proofLib = args["proofLib"] as? ProofLib
+        let proofLib = args["proofLib"] as? Int
       else {
-        result(FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments", details: nil))
+        result(
+          FlutterError(
+            code: "ARGUMENT_ERROR", message: "Missing arguments \(call.arguments)", details: nil))
         return
       }
 
       do {
+        var moproProofLib: ProofLib
+        if proofLib == 0 {
+          moproProofLib = ProofLib.arkworks
+        } else {
+          moproProofLib = ProofLib.rapidsnark
+        }
         // Call the function from mopro.swift
         let proofResult = try generateCircomProof(
-          zkeyPath: zkeyPath, circuitInputs: inputs, proofLib: proofLib)
+          zkeyPath: zkeyPath, circuitInputs: inputs, proofLib: moproProofLib)
         let resultMap = convertCircomProof(res: proofResult)
 
         // Return the proof and inputs as a map supported by the StandardMethodCodec
@@ -141,17 +149,23 @@ public class MoproFlutterPlugin: NSObject, FlutterPlugin {
       guard let args = call.arguments as? [String: Any],
         let zkeyPath = args["zkeyPath"] as? String,
         let proof = args["proof"] as? [String: Any],
-        let proofLib = args["proofLib"] as? ProofLib
+        let proofLib = args["proofLib"] as? Int
       else {
-        result(FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments", details: nil))
+        result(FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments \(call.arguments)", details: nil))
         return
       }
 
       do {
+        var moproProofLib: ProofLib
+        if proofLib == 0 {
+          moproProofLib = ProofLib.arkworks
+        } else {
+          moproProofLib = ProofLib.rapidsnark
+        }
         let circomProofResult = convertCircomProofResult(proof: proof)
         // Call the function from mopro.swift
         let valid = try verifyCircomProof(
-          zkeyPath: zkeyPath, proofResult: circomProofResult, proofLib: proofLib)
+          zkeyPath: zkeyPath, proofResult: circomProofResult, proofLib: moproProofLib)
 
         // Return the proof and inputs as a map supported by the StandardMethodCodec
         result(valid)

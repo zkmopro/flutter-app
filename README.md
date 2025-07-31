@@ -121,9 +121,22 @@ Open the `./android` directory in Android Studio. You will be able to browse to 
 
 1. Start an emulator or simulator
 
-    - iOS: Open the iOS simulator via Xcode or open -a Simulator.
+    - iOS: Open the iOS simulator via Xcode or `open -a Simulator`.
 
-    - Android: Launch an emulator using Android Studio or emulator -avd <your_avd_name>.
+    - Android: Launch an emulator using Android Studio or `emulator -avd <your_avd_name>`.
+        > [!NOTE]  
+        > If there is an error `command not found: emulator`
+        > Check if the emulator binary exists in:
+        > `~/Library/Android/sdk/emulator/emulator`
+        > or
+        > `~/Android/Sdk/emulator/emulator`
+        > 
+        > Edit your shell config file (likely `~/.zshrc`) and add:
+        > `export ANDROID_SDK_ROOT=~/Library/Android/sdk`
+        > `export PATH=$PATH:$ANDROID_SDK_ROOT/emulator`
+        >
+        > Check if it's fixed:
+        > `emulator -list-avds`
 
 2. Run the integration test
 

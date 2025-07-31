@@ -125,18 +125,23 @@ Open the `./android` directory in Android Studio. You will be able to browse to 
 
     - Android: Launch an emulator using Android Studio or `emulator -avd <your_avd_name>`.
         > [!NOTE]  
-        > If there is an error `command not found: emulator`
-        > Check if the emulator binary exists in:
-        > `~/Library/Android/sdk/emulator/emulator`
-        > or
-        > `~/Android/Sdk/emulator/emulator`
-        > 
-        > Edit your shell config file (likely `~/.zshrc`) and add:
-        > `export ANDROID_SDK_ROOT=~/Library/Android/sdk`
-        > `export PATH=$PATH:$ANDROID_SDK_ROOT/emulator`
+        > If you encounter the error `command not found: emulator`, ensure the emulator binary is present in one of the following locations:
         >
-        > Check if it's fixed:
-        > `emulator -list-avds`
+        > - `~/Library/Android/sdk/emulator/emulator`
+        > - `~/Android/Sdk/emulator/emulator`
+        >
+        > To resolve this issue, update your shell configuration file (likely `~/.zshrc`) by adding the following lines:
+        >
+        > ```sh
+        > export ANDROID_SDK_ROOT=~/Library/Android/sdk
+        > export PATH=$PATH:$ANDROID_SDK_ROOT/emulator
+        > ```
+        >
+        > After making these changes, verify that the issue is resolved by running:
+        >
+        > ```sh
+        > emulator -list-avds
+        > ```
 
 2. Run the integration test
 

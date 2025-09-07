@@ -245,7 +245,11 @@ public class MoproFlutterPlugin: NSObject, FlutterPlugin {
       }
     case "generateNoirProof":
       guard let args = call.arguments as? [String: Any],
-        let circuitPath = args["circuitPath"] as? String
+        let circuitPath = args["circuitPath"] as? String,
+        let inputs = args["inputs"] as? [String],
+        let onChain = args["onChain"] as? Bool,
+        let vk = args["vk"] as? FlutterStandardTypedData,
+        let lowMemoryMode = args["lowMemoryMode"] as? Bool
       else {
         result(FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments", details: nil))
         return
@@ -253,17 +257,9 @@ public class MoproFlutterPlugin: NSObject, FlutterPlugin {
 
       let srsPath = args["srsPath"] as? String
 
-      guard let args = call.arguments as? [String: Any],
-        let inputs = args["inputs"] as? [String]
-      else {
-        result(
-          FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments inputs", details: nil))
-        return
-      }
-
       do {
         let proofResult = try generateNoirProof(
-          circuitPath: circuitPath, srsPath: srsPath, inputs: inputs)
+          circuitPath: circuitPath, srsPath: srsPath, inputs: inputs, onChain: onChain, vk: vk.data, lowMemoryMode: lowMemoryMode)
         result(proofResult)
       } catch {
         result(
@@ -274,27 +270,44 @@ public class MoproFlutterPlugin: NSObject, FlutterPlugin {
 
     case "verifyNoirProof":
       guard let args = call.arguments as? [String: Any],
-        let circuitPath = args["circuitPath"] as? String
+        let circuitPath = args["circuitPath"] as? String,
+        let proof = args["proof"] as? FlutterStandardTypedData,
+        let onChain = args["onChain"] as? Bool,
+        let vk = args["vk"] as? FlutterStandardTypedData,
+        let lowMemoryMode = args["lowMemoryMode"] as? Bool
       else {
         result(FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments", details: nil))
         return
       }
 
-      guard let args = call.arguments as? [String: Any],
-        let proof = args["proof"] as? FlutterStandardTypedData
-      else {
-        result(
-          FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments proof", details: nil))
-        return
-      }
-
       do {
-        let valid = try verifyNoirProof(circuitPath: circuitPath, proof: proof.data)
+        let valid = try verifyNoirProof(circuitPath: circuitPath, proof: proof.data, onChain: onChain, vk: vk.data, lowMemoryMode: lowMemoryMode)
         result(valid)
       } catch {
         result(
           FlutterError(
             code: "PROOF_VERIFICATION_ERROR", message: "Failed to verify proof",
+            details: error.localizedDescription))
+      }
+    case "getNoirVerificationKey":
+      guard let args = call.arguments as? [String: Any],
+        let circuitPath = args["circuitPath"] as? String,
+        let onChain = args["onChain"] as? Bool,
+        let lowMemoryMode = args["lowMemoryMode"] as? Bool
+      else {
+        result(FlutterError(code: "ARGUMENT_ERROR", message: "Missing arguments", details: nil))
+        return
+      }
+
+      let srsPath = args["srsPath"] as? String
+
+      do {
+        let vkResult = try getNoirVerificationKey(circuitPath: circuitPath, srsPath: srsPath, onChain: onChain, lowMemoryMode: lowMemoryMode)
+        result(vkResult)
+      } catch {
+        result(
+          FlutterError(
+            code: "VK_GENERATION_ERROR", message: "Failed to generate verification key",
             details: error.localizedDescription))
       }
     default:

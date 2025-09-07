@@ -58,21 +58,33 @@ class MoproFlutter {
     });
   }
 
-  Future<Uint8List> generateNoirProof(String circuitPath, String? srsPath, List<String> inputs) async {
+  Future<Uint8List> generateNoirProof(String circuitPath, String? srsPath, List<String> inputs, bool onChain, Uint8List vk, bool lowMemoryMode) async {
     return await copyAssetToFileSystem(circuitPath).then((circuitPath) async {
       if (srsPath != null) {
         return await copyAssetToFileSystem(srsPath).then((srsPath) async {
-          return await MoproFlutterPlatform.instance.generateNoirProof(circuitPath, srsPath, inputs);
+          return await MoproFlutterPlatform.instance.generateNoirProof(circuitPath, srsPath, inputs, onChain, vk, lowMemoryMode);
         });
       } else {
-        return await MoproFlutterPlatform.instance.generateNoirProof(circuitPath, null, inputs);
+        return await MoproFlutterPlatform.instance.generateNoirProof(circuitPath, null, inputs, onChain, vk, lowMemoryMode);
       }
     });
   }
 
-  Future<bool> verifyNoirProof(String circuitPath, Uint8List proof) async {
+  Future<bool> verifyNoirProof(String circuitPath, Uint8List proof, bool onChain, Uint8List vk, bool lowMemoryMode) async {
     return await copyAssetToFileSystem(circuitPath).then((circuitPath) async {  
-      return await MoproFlutterPlatform.instance.verifyNoirProof(circuitPath, proof);
+      return await MoproFlutterPlatform.instance.verifyNoirProof(circuitPath, proof, onChain, vk, lowMemoryMode);
+    });
+  }
+
+  Future<Uint8List> getNoirVerificationKey(String circuitPath, String? srsPath, bool onChain, bool lowMemoryMode) async {
+    return await copyAssetToFileSystem(circuitPath).then((circuitPath) async {
+      if (srsPath != null) {
+        return await copyAssetToFileSystem(srsPath).then((srsPath) async {
+          return await MoproFlutterPlatform.instance.getNoirVerificationKey(circuitPath, srsPath, onChain, lowMemoryMode);
+        });
+      } else {
+        return await MoproFlutterPlatform.instance.getNoirVerificationKey(circuitPath, null, onChain, lowMemoryMode);
+      }
     });
   }
 }

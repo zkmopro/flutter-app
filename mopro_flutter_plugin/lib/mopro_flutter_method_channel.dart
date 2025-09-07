@@ -74,22 +74,39 @@ class MethodChannelMoproFlutter extends MoproFlutterPlatform {
 
   @override
   Future<Uint8List> generateNoirProof(
-      String circuitPath, String? srsPath, List<String> inputs) async {
+      String circuitPath, String? srsPath, List<String> inputs, bool onChain, Uint8List vk, bool lowMemoryMode) async {
     final result =
         await methodChannel.invokeMethod<Uint8List>('generateNoirProof', {
       'circuitPath': circuitPath,
       'srsPath': srsPath,
       'inputs': inputs,
+      'onChain': onChain,
+      'vk': vk,
+      'lowMemoryMode': lowMemoryMode,
     });
     return result ?? Uint8List(0);
   }
 
   @override
-  Future<bool> verifyNoirProof(String circuitPath, Uint8List proof) async {
+  Future<bool> verifyNoirProof(String circuitPath, Uint8List proof, bool onChain, Uint8List vk, bool lowMemoryMode) async {
     final result = await methodChannel.invokeMethod<bool>('verifyNoirProof', {
       'circuitPath': circuitPath,
       'proof': proof,
+      'onChain': onChain,
+      'vk': vk,
+      'lowMemoryMode': lowMemoryMode,
     });
     return result ?? false;
+  }
+
+  @override
+  Future<Uint8List> getNoirVerificationKey(String circuitPath, String? srsPath, bool onChain, bool lowMemoryMode) async {
+    final result = await methodChannel.invokeMethod<Uint8List>('getNoirVerificationKey', {
+      'circuitPath': circuitPath,
+      'srsPath': srsPath,
+      'onChain': onChain,
+      'lowMemoryMode': lowMemoryMode,
+    });
+    return result ?? Uint8List(0);
   }
 }

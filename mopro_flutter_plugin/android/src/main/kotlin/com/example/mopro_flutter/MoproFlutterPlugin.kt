@@ -235,7 +235,25 @@ class MoproFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 null
             )
 
-            val res = generateNoirProof(circuitPath, srsPath, inputs)
+            val onChain = call.argument<Boolean>("onChain") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing onChain",
+                null
+            )
+
+            val vk = call.argument<ByteArray>("vk") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing vk",
+                null
+            )
+
+            val lowMemoryMode = call.argument<Boolean>("lowMemoryMode") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing lowMemoryMode",
+                null
+            )
+
+            val res = generateNoirProof(circuitPath, srsPath, inputs, onChain, vk, lowMemoryMode)
             result.success(res)
         } else if (call.method== "verifyNoirProof") {
             val circuitPath = call.argument<String>("circuitPath") ?: return result.error(
@@ -250,7 +268,49 @@ class MoproFlutterPlugin : FlutterPlugin, MethodCallHandler {
                 null
             )
 
-            val res = verifyNoirProof(circuitPath, proof)
+            val onChain = call.argument<Boolean>("onChain") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing onChain",
+                null
+            )
+
+            val vk = call.argument<ByteArray>("vk") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing vk",
+                null
+            )
+
+            val lowMemoryMode = call.argument<Boolean>("lowMemoryMode") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing lowMemoryMode",
+                null
+            )
+
+            val res = verifyNoirProof(circuitPath, proof, onChain, vk, lowMemoryMode)
+            result.success(res)
+
+        } else if (call.method== "getNoirVerificationKey") {
+            val circuitPath = call.argument<String>("circuitPath") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing circuitPath",
+                null
+            )
+
+            val srsPath = call.argument<String>("srsPath")
+
+            val onChain = call.argument<Boolean>("onChain") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing onChain",
+                null
+            )
+
+            val lowMemoryMode = call.argument<Boolean>("lowMemoryMode") ?: return result.error(
+                "ARGUMENT_ERROR",
+                "Missing lowMemoryMode",
+                null
+            )
+
+            val res = getNoirVerificationKey(circuitPath, srsPath, onChain, lowMemoryMode)
             result.success(res)
 
         } else {

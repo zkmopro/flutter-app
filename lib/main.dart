@@ -19,6 +19,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   CircomProofResult? _circomProofResult;
   Halo2ProofResult? _halo2ProofResult;
   Uint8List? _noirProofResult;
+  Uint8List? _noirVerificationKey;
   bool? _circomValid;
   bool? _halo2Valid;
   bool? _noirValid;
@@ -386,11 +387,40 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                           _controllerNoirA.text,
                           _controllerNoirB.text
                         ];
+                        
+                        // Constants for Noir proof generation
+                        const bool onChain = true;  // Use Keccak for Solidity compatibility
+                        const bool lowMemoryMode = false;
+                        
+                        // Get or generate verification key if not already available
+                        if (_noirVerificationKey == null) {
+                          setState(() {
+                            _error = null;
+                          });
+                          // Try to load existing VK from assets, or generate new one
+                          try {
+                            // First try to load existing VK from assets
+                            final vkAsset = await rootBundle.load('assets/noir_multiplier2.vk');
+                            _noirVerificationKey = vkAsset.buffer.asUint8List();
+                          } catch (e) {
+                            // If VK doesn't exist in assets, generate it
+                            _noirVerificationKey = await _moproFlutterPlugin.getNoirVerificationKey(
+                              "assets/noir_multiplier2.json",
+                              "assets/noir_multiplier2.srs",
+                              onChain,
+                              lowMemoryMode
+                            );
+                          }
+                        }
+                        
                         noirProofResult =
                             await _moproFlutterPlugin.generateNoirProof(
                                 "assets/noir_multiplier2.json",
-                                null,
-                                inputs);
+                                "assets/noir_multiplier2.srs",
+                                inputs,
+                                onChain,
+                                _noirVerificationKey!,
+                                lowMemoryMode);
                       } on Exception catch (e) {
                         print("Error: $e");
                         noirProofResult = null;
@@ -424,9 +454,22 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                       bool? valid;
                       try {
                         var proofResult = _noirProofResult;
+                        var vk = _noirVerificationKey;
+                        
+                        if (vk == null) {
+                          throw Exception("Verification key not available. Generate proof first.");
+                        }
+                        
+                        // Constants for Noir proof verification
+                        const bool onChain = true;  // Use Keccak for Solidity compatibility
+                        const bool lowMemoryMode = false;
+                        
                         valid = await _moproFlutterPlugin.verifyNoirProof(
                             "assets/noir_multiplier2.json",
-                            proofResult!);
+                            proofResult!,
+                            onChain,
+                            vk,
+                            lowMemoryMode);
                       } on Exception catch (e) {
                         print("Error: $e");
                         valid = false;

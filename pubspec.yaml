@@ -59,6 +59,8 @@ flutter:
     - assets/plonk_fibonacci_vk.bin
     - assets/plonk_fibonacci_srs.bin
     - assets/noir_multiplier2.json
+    - assets/noir_multiplier2.srs
+    - assets/noir_multiplier2.vk
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -1,0 +1,20 @@
+[dependencies]
+flutter_rust_bridge = "=2.11.1"
+
+[dependencies.test-e2e]
+git = "https://github.com/vivianjeng/mopro-refactor.git"
+version = "0.1.0"
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[lints.rust.unexpected_cfgs]
+check-cfg = ["cfg(frb_expand)"]
+level = "warn"
+
+[package]
+edition = "2021"
+name = "mopro_flutter_bindings"
+version = "0.1.0"
+
+[workspace]

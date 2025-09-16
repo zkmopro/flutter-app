@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
-import 'package:mopro_flutter/mopro_flutter.dart';
-import 'package:mopro_flutter/mopro_types.dart';
+import 'package:mopro_flutter_bindings/src/rust/third_party/test_e2e.dart';
+import 'package:mopro_flutter_bindings/src/rust/frb_generated.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,14 +18,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
-  CircomProofResult? _circomProofResult;
-  Halo2ProofResult? _halo2ProofResult;
+  // CircomProofResult? _circomProofResult;
+  // Halo2ProofResult? _halo2ProofResult;
   Uint8List? _noirProofResult;
   Uint8List? _noirVerificationKey;
   bool? _circomValid;
   bool? _halo2Valid;
   bool? _noirValid;
-  final _moproFlutterPlugin = MoproFlutter();
+  // final _moproFlutterPlugin = MoproFlutter();
   bool isProving = false;
   Exception? _error;
   late TabController _tabController;
@@ -104,16 +106,16 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                       });
 
                       FocusManager.instance.primaryFocus?.unfocus();
-                      CircomProofResult? proofResult;
+                      // CircomProofResult? proofResult;
                       try {
                         var inputs =
                             '{"a":["${_controllerA.text}"],"b":["${_controllerB.text}"]}';
-                        proofResult =
-                            await _moproFlutterPlugin.generateCircomProof(
-                                "assets/multiplier2_final.zkey", inputs, ProofLib.arkworks);  // DO NOT change the proofLib if you don't build for rapidsnark
+                        // proofResult =
+                        //     await _moproFlutterPlugin.generateCircomProof(
+                        //         "assets/multiplier2_final.zkey", inputs, ProofLib.arkworks);  // DO NOT change the proofLib if you don't build for rapidsnark
                       } on Exception catch (e) {
                         print("Error: $e");
-                        proofResult = null;
+                        // proofResult = null;
                         setState(() {
                           _error = e;
                         });
@@ -123,7 +125,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
                       setState(() {
                         isProving = false;
-                        _circomProofResult = proofResult;
+                        // _circomProofResult = proofResult;
                       });
                     },
                     child: const Text("Generate Proof")),
@@ -145,9 +147,9 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                       FocusManager.instance.primaryFocus?.unfocus();
                       bool? valid;
                       try {
-                        var proofResult = _circomProofResult;
-                        valid = await _moproFlutterPlugin.verifyCircomProof(
-                            "assets/multiplier2_final.zkey", proofResult!, ProofLib.arkworks); // DO NOT change the proofLib if you don't build for rapidsnark
+                        // var proofResult = _circomProofResult;
+                        // valid = await _moproFlutterPlugin.verifyCircomProof(
+                        //     "assets/multiplier2_final.zkey", proofResult!, ProofLib.arkworks); // DO NOT change the proofLib if you don't build for rapidsnark
                       } on Exception catch (e) {
                         print("Error: $e");
                         valid = false;
@@ -173,24 +175,24 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
               ),
             ],
           ),
-          if (_circomProofResult != null)
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('Proof is valid: ${_circomValid ?? false}'),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child:
-                      Text('Proof inputs: ${_circomProofResult?.inputs ?? ""}'),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('Proof: ${_circomProofResult?.proof ?? ""}'),
-                ),
-              ],
-            ),
+          // if (_circomProofResult != null)
+          //   Column(
+          //     children: [
+          //       Padding(
+          //         padding: const EdgeInsets.all(8.0),
+          //         child: Text('Proof is valid: ${_circomValid ?? false}'),
+          //       ),
+          //       Padding(
+          //         padding: const EdgeInsets.all(8.0),
+          //         child:
+          //             Text('Proof inputs: ${_circomProofResult?.inputs ?? ""}'),
+          //       ),
+          //       Padding(
+          //         padding: const EdgeInsets.all(8.0),
+          //         child: Text('Proof: ${_circomProofResult?.proof ?? ""}'),
+          //       ),
+          //     ],
+          //   ),
         ],
       ),
     );
@@ -235,19 +237,19 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                       });
 
                       FocusManager.instance.primaryFocus?.unfocus();
-                      Halo2ProofResult? halo2ProofResult;
+                      // Halo2ProofResult? halo2ProofResult;
                       try {
                         var inputs = {
                           "out": [(_controllerOut.text)]
                         };
-                        halo2ProofResult =
-                            await _moproFlutterPlugin.generateHalo2Proof(
-                                "assets/plonk_fibonacci_srs.bin",
-                                "assets/plonk_fibonacci_pk.bin",
-                                inputs);
+                        // halo2ProofResult =
+                        //     await _moproFlutterPlugin.generateHalo2Proof(
+                        //         "assets/plonk_fibonacci_srs.bin",
+                        //         "assets/plonk_fibonacci_pk.bin",
+                        //         inputs);
                       } on Exception catch (e) {
                         print("Error: $e");
-                        halo2ProofResult = null;
+                        // halo2ProofResult = null;
                         setState(() {
                           _error = e;
                         });
@@ -257,7 +259,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
                       setState(() {
                         isProving = false;
-                        _halo2ProofResult = halo2ProofResult;
+                        // _halo2ProofResult = halo2ProofResult;
                       });
                     },
                     child: const Text("Generate Proof")),
@@ -277,12 +279,12 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                       FocusManager.instance.primaryFocus?.unfocus();
                       bool? valid;
                       try {
-                        var proofResult = _halo2ProofResult;
-                        valid = await _moproFlutterPlugin.verifyHalo2Proof(
-                            "assets/plonk_fibonacci_srs.bin",
-                            "assets/plonk_fibonacci_vk.bin",
-                            proofResult!.proof,
-                            proofResult.inputs);
+                        // var proofResult = _halo2ProofResult;
+                        // valid = await _moproFlutterPlugin.verifyHalo2Proof(
+                        //     "assets/plonk_fibonacci_srs.bin",
+                        //     "assets/plonk_fibonacci_vk.bin",
+                        //     proofResult!.proof,
+                        //     proofResult.inputs);
                       } on Exception catch (e) {
                         print("Error: $e");
                         valid = false;
@@ -308,24 +310,24 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
               ),
             ],
           ),
-          if (_halo2ProofResult != null)
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('Proof is valid: ${_halo2Valid ?? false}'),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child:
-                      Text('Proof inputs: ${_halo2ProofResult?.inputs ?? ""}'),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('Proof: ${_halo2ProofResult?.proof ?? ""}'),
-                ),
-              ],
-            ),
+          // if (_halo2ProofResult != null)
+          //   Column(
+          //     children: [
+          //       Padding(
+          //         padding: const EdgeInsets.all(8.0),
+          //         child: Text('Proof is valid: ${_halo2Valid ?? false}'),
+          //       ),
+          //       Padding(
+          //         padding: const EdgeInsets.all(8.0),
+          //         child:
+          //             Text('Proof inputs: ${_halo2ProofResult?.inputs ?? ""}'),
+          //       ),
+          //       Padding(
+          //         padding: const EdgeInsets.all(8.0),
+          //         child: Text('Proof: ${_halo2ProofResult?.proof ?? ""}'),
+          //       ),
+          //     ],
+          //   ),
         ],
       ),
     );
@@ -372,7 +374,9 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                 padding: const EdgeInsets.all(8.0),
                 child: OutlinedButton(
                     onPressed: () async {
-                      if (_controllerNoirA.text.isEmpty || _controllerNoirB.text.isEmpty || isProving) {
+                      if (_controllerNoirA.text.isEmpty ||
+                          _controllerNoirB.text.isEmpty ||
+                          isProving) {
                         return;
                       }
                       setState(() {
@@ -387,11 +391,12 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                           _controllerNoirA.text,
                           _controllerNoirB.text
                         ];
-                        
+
                         // Constants for Noir proof generation
-                        const bool onChain = true;  // Use Keccak for Solidity compatibility
+                        const bool onChain =
+                            true; // Use Keccak for Solidity compatibility
                         const bool lowMemoryMode = false;
-                        
+
                         // Get or generate verification key if not already available
                         if (_noirVerificationKey == null) {
                           setState(() {
@@ -400,27 +405,35 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                           // Try to load existing VK from assets, or generate new one
                           try {
                             // First try to load existing VK from assets
-                            final vkAsset = await rootBundle.load('assets/noir_multiplier2.vk');
+                            final vkAsset = await rootBundle
+                                .load('assets/noir_multiplier2.vk');
                             _noirVerificationKey = vkAsset.buffer.asUint8List();
                           } catch (e) {
+                            final circuitPath = await copyAssetToFileSystem(
+                                'assets/noir_multiplier2.json');
+                            final srsPath = await copyAssetToFileSystem(
+                                'assets/noir_multiplier2.srs');
                             // If VK doesn't exist in assets, generate it
-                            _noirVerificationKey = await _moproFlutterPlugin.getNoirVerificationKey(
-                              "assets/noir_multiplier2.json",
-                              "assets/noir_multiplier2.srs",
-                              onChain,
-                              lowMemoryMode
+                            _noirVerificationKey = await getNoirVerificationKey(
+                              circuitPath: circuitPath,
+                              srsPath: srsPath,
+                              onChain: onChain,
+                              lowMemoryMode: lowMemoryMode,
                             );
                           }
                         }
-                        
-                        noirProofResult =
-                            await _moproFlutterPlugin.generateNoirProof(
-                                "assets/noir_multiplier2.json",
-                                "assets/noir_multiplier2.srs",
-                                inputs,
-                                onChain,
-                                _noirVerificationKey!,
-                                lowMemoryMode);
+
+                        final circuitPath = await copyAssetToFileSystem(
+                            'assets/noir_multiplier2.json');
+                        final srsPath = await copyAssetToFileSystem(
+                            'assets/noir_multiplier2.srs');
+                        noirProofResult = await generateNoirProof(
+                            circuitPath: circuitPath,
+                            srsPath: srsPath,
+                            inputs: inputs,
+                            onChain: onChain,
+                            vk: _noirVerificationKey!,
+                            lowMemoryMode: lowMemoryMode);
                       } on Exception catch (e) {
                         print("Error: $e");
                         noirProofResult = null;
@@ -442,7 +455,9 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                 padding: const EdgeInsets.all(8.0),
                 child: OutlinedButton(
                     onPressed: () async {
-                      if (_controllerNoirA.text.isEmpty || _controllerNoirB.text.isEmpty || isProving) {
+                      if (_controllerNoirA.text.isEmpty ||
+                          _controllerNoirB.text.isEmpty ||
+                          isProving) {
                         return;
                       }
                       setState(() {
@@ -455,21 +470,26 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                       try {
                         var proofResult = _noirProofResult;
                         var vk = _noirVerificationKey;
-                        
+
                         if (vk == null) {
-                          throw Exception("Verification key not available. Generate proof first.");
+                          throw Exception(
+                              "Verification key not available. Generate proof first.");
                         }
-                        
+
+                        final circuitPath = await copyAssetToFileSystem(
+                            'assets/noir_multiplier2.json');
                         // Constants for Noir proof verification
-                        const bool onChain = true;  // Use Keccak for Solidity compatibility
+                        const bool onChain =
+                            true; // Use Keccak for Solidity compatibility
                         const bool lowMemoryMode = false;
-                        
-                        valid = await _moproFlutterPlugin.verifyNoirProof(
-                            "assets/noir_multiplier2.json",
-                            proofResult!,
-                            onChain,
-                            vk,
-                            lowMemoryMode);
+
+                        valid = await verifyNoirProof(
+                          circuitPath: circuitPath,
+                          proof: proofResult!,
+                          onChain: onChain,
+                          vk: vk,
+                          lowMemoryMode: lowMemoryMode,
+                        );
                       } on Exception catch (e) {
                         print("Error: $e");
                         valid = false;
@@ -504,8 +524,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child:
-                      Text('Proof: ${_noirProofResult ?? ""}'),
+                  child: Text('Proof: ${_noirProofResult ?? ""}'),
                 ),
               ],
             ),
@@ -541,4 +560,14 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
       ),
     );
   }
+}
+
+/// Copies an asset to a file and returns the file path
+Future<String> copyAssetToFileSystem(String assetPath) async {
+  final byteData = await rootBundle.load(assetPath);
+  final directory = await getApplicationDocumentsDirectory();
+  final filename = assetPath.split('/').last;
+  final file = File('${directory.path}/$filename');
+  await file.writeAsBytes(byteData.buffer.asUint8List());
+  return file.path;
 }

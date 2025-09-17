@@ -6,7 +6,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
-import uniffi.{{PACKAGE_NAME}}.*
+import uniffi.mopro.*
 
 import io.flutter.plugin.common.StandardMethodCodec
 

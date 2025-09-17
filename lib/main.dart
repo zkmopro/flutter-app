@@ -6,7 +6,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:mopro_flutter_bindings/src/rust/third_party/test_e2e.dart';
 import 'package:mopro_flutter_bindings/src/rust/frb_generated.dart';
 
-void main() {
+Future<void> main() async {
+  await RustLib.init();
   runApp(const MyApp());
 }
 
@@ -18,14 +19,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
-  // CircomProofResult? _circomProofResult;
-  // Halo2ProofResult? _halo2ProofResult;
+  CircomProofResult? _circomProofResult;
+  Halo2ProofResult? _halo2ProofResult;
   Uint8List? _noirProofResult;
   Uint8List? _noirVerificationKey;
   bool? _circomValid;
   bool? _halo2Valid;
   bool? _noirValid;
-  // final _moproFlutterPlugin = MoproFlutter();
   bool isProving = false;
   Exception? _error;
   late TabController _tabController;
@@ -106,16 +106,20 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                       });
 
                       FocusManager.instance.primaryFocus?.unfocus();
-                      // CircomProofResult? proofResult;
+                      CircomProofResult? proofResult;
                       try {
                         var inputs =
                             '{"a":["${_controllerA.text}"],"b":["${_controllerB.text}"]}';
-                        // proofResult =
-                        //     await _moproFlutterPlugin.generateCircomProof(
-                        //         "assets/multiplier2_final.zkey", inputs, ProofLib.arkworks);  // DO NOT change the proofLib if you don't build for rapidsnark
+                        final zkeyPath = await copyAssetToFileSystem(
+                            'assets/multiplier2_final.zkey');
+                        proofResult = await generateCircomProof(
+                            zkeyPath: zkeyPath,
+                            circuitInputs: inputs,
+                            proofLib: ProofLib
+                                .arkworks); // DO NOT change the proofLib if you don't build for rapidsnark
                       } on Exception catch (e) {
                         print("Error: $e");
-                        // proofResult = null;
+                        proofResult = null;
                         setState(() {
                           _error = e;
                         });
@@ -125,7 +129,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
                       setState(() {
                         isProving = false;
-                        // _circomProofResult = proofResult;
+                        _circomProofResult = proofResult;
                       });
                     },
                     child: const Text("Generate Proof")),
@@ -147,9 +151,14 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                       FocusManager.instance.primaryFocus?.unfocus();
                       bool? valid;
                       try {
-                        // var proofResult = _circomProofResult;
-                        // valid = await _moproFlutterPlugin.verifyCircomProof(
-                        //     "assets/multiplier2_final.zkey", proofResult!, ProofLib.arkworks); // DO NOT change the proofLib if you don't build for rapidsnark
+                        var proofResult = _circomProofResult;
+                        final zkeyPath = await copyAssetToFileSystem(
+                            'assets/multiplier2_final.zkey');
+                        valid = await verifyCircomProof(
+                            zkeyPath: zkeyPath,
+                            proofResult: proofResult!,
+                            proofLib: ProofLib
+                                .arkworks); // DO NOT change the proofLib if you don't build for rapidsnark
                       } on Exception catch (e) {
                         print("Error: $e");
                         valid = false;
@@ -175,24 +184,24 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
               ),
             ],
           ),
-          // if (_circomProofResult != null)
-          //   Column(
-          //     children: [
-          //       Padding(
-          //         padding: const EdgeInsets.all(8.0),
-          //         child: Text('Proof is valid: ${_circomValid ?? false}'),
-          //       ),
-          //       Padding(
-          //         padding: const EdgeInsets.all(8.0),
-          //         child:
-          //             Text('Proof inputs: ${_circomProofResult?.inputs ?? ""}'),
-          //       ),
-          //       Padding(
-          //         padding: const EdgeInsets.all(8.0),
-          //         child: Text('Proof: ${_circomProofResult?.proof ?? ""}'),
-          //       ),
-          //     ],
-          //   ),
+          if (_circomProofResult != null)
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Proof is valid: ${_circomValid ?? false}'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child:
+                      Text('Proof inputs: ${_circomProofResult?.inputs ?? ""}'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Proof: ${_circomProofResult?.proof ?? ""}'),
+                ),
+              ],
+            ),
         ],
       ),
     );
@@ -237,19 +246,23 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                       });
 
                       FocusManager.instance.primaryFocus?.unfocus();
-                      // Halo2ProofResult? halo2ProofResult;
+                      Halo2ProofResult? halo2ProofResult;
                       try {
                         var inputs = {
                           "out": [(_controllerOut.text)]
                         };
-                        // halo2ProofResult =
-                        //     await _moproFlutterPlugin.generateHalo2Proof(
-                        //         "assets/plonk_fibonacci_srs.bin",
-                        //         "assets/plonk_fibonacci_pk.bin",
-                        //         inputs);
+                        final srsPath = await copyAssetToFileSystem(
+                            'assets/plonk_fibonacci_srs.bin');
+                        final pkPath = await copyAssetToFileSystem(
+                            'assets/plonk_fibonacci_pk.bin');
+                        halo2ProofResult = await generateHalo2Proof(
+                          srsPath: srsPath,
+                          pkPath: pkPath,
+                          circuitInputs: inputs,
+                        );
                       } on Exception catch (e) {
                         print("Error: $e");
-                        // halo2ProofResult = null;
+                        halo2ProofResult = null;
                         setState(() {
                           _error = e;
                         });
@@ -259,7 +272,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
 
                       setState(() {
                         isProving = false;
-                        // _halo2ProofResult = halo2ProofResult;
+                        _halo2ProofResult = halo2ProofResult;
                       });
                     },
                     child: const Text("Generate Proof")),
@@ -279,12 +292,17 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                       FocusManager.instance.primaryFocus?.unfocus();
                       bool? valid;
                       try {
-                        // var proofResult = _halo2ProofResult;
-                        // valid = await _moproFlutterPlugin.verifyHalo2Proof(
-                        //     "assets/plonk_fibonacci_srs.bin",
-                        //     "assets/plonk_fibonacci_vk.bin",
-                        //     proofResult!.proof,
-                        //     proofResult.inputs);
+                        var proofResult = _halo2ProofResult;
+                        final srsPath = await copyAssetToFileSystem(
+                            'assets/plonk_fibonacci_srs.bin');
+                        final vkPath = await copyAssetToFileSystem(
+                            'assets/plonk_fibonacci_vk.bin');
+                        valid = await verifyHalo2Proof(
+                          srsPath: srsPath,
+                          vkPath: vkPath,
+                          proof: proofResult!.proof,
+                          publicInput: proofResult.inputs,
+                        );
                       } on Exception catch (e) {
                         print("Error: $e");
                         valid = false;
@@ -310,24 +328,24 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
               ),
             ],
           ),
-          // if (_halo2ProofResult != null)
-          //   Column(
-          //     children: [
-          //       Padding(
-          //         padding: const EdgeInsets.all(8.0),
-          //         child: Text('Proof is valid: ${_halo2Valid ?? false}'),
-          //       ),
-          //       Padding(
-          //         padding: const EdgeInsets.all(8.0),
-          //         child:
-          //             Text('Proof inputs: ${_halo2ProofResult?.inputs ?? ""}'),
-          //       ),
-          //       Padding(
-          //         padding: const EdgeInsets.all(8.0),
-          //         child: Text('Proof: ${_halo2ProofResult?.proof ?? ""}'),
-          //       ),
-          //     ],
-          //   ),
+          if (_halo2ProofResult != null)
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Proof is valid: ${_halo2Valid ?? false}'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child:
+                      Text('Proof inputs: ${_halo2ProofResult?.inputs ?? ""}'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Proof: ${_halo2ProofResult?.proof ?? ""}'),
+                ),
+              ],
+            ),
         ],
       ),
     );
@@ -414,12 +432,12 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                             final srsPath = await copyAssetToFileSystem(
                                 'assets/noir_multiplier2.srs');
                             // If VK doesn't exist in assets, generate it
-                            _noirVerificationKey = await getNoirVerificationKey(
-                              circuitPath: circuitPath,
-                              srsPath: srsPath,
-                              onChain: onChain,
-                              lowMemoryMode: lowMemoryMode,
-                            );
+                            // _noirVerificationKey = await getNoirVerificationKey(
+                            //   circuitPath: circuitPath,
+                            //   srsPath: srsPath,
+                            //   onChain: onChain,
+                            //   lowMemoryMode: lowMemoryMode,
+                            // );
                           }
                         }
 
@@ -427,13 +445,13 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                             'assets/noir_multiplier2.json');
                         final srsPath = await copyAssetToFileSystem(
                             'assets/noir_multiplier2.srs');
-                        noirProofResult = await generateNoirProof(
-                            circuitPath: circuitPath,
-                            srsPath: srsPath,
-                            inputs: inputs,
-                            onChain: onChain,
-                            vk: _noirVerificationKey!,
-                            lowMemoryMode: lowMemoryMode);
+                        // noirProofResult = await generateNoirProof(
+                        //     circuitPath: circuitPath,
+                        //     srsPath: srsPath,
+                        //     inputs: inputs,
+                        //     onChain: onChain,
+                        //     vk: _noirVerificationKey!,
+                        //     lowMemoryMode: lowMemoryMode);
                       } on Exception catch (e) {
                         print("Error: $e");
                         noirProofResult = null;
@@ -483,13 +501,13 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                             true; // Use Keccak for Solidity compatibility
                         const bool lowMemoryMode = false;
 
-                        valid = await verifyNoirProof(
-                          circuitPath: circuitPath,
-                          proof: proofResult!,
-                          onChain: onChain,
-                          vk: vk,
-                          lowMemoryMode: lowMemoryMode,
-                        );
+                        // valid = await verifyNoirProof(
+                        //   circuitPath: circuitPath,
+                        //   proof: proofResult!,
+                        //   onChain: onChain,
+                        //   vk: vk,
+                        //   lowMemoryMode: lowMemoryMode,
+                        // );
                       } on Exception catch (e) {
                         print("Error: $e");
                         valid = false;

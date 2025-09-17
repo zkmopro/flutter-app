@@ -21,10 +21,34 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   });
 
   @protected
+  Map<String, List<String>> dco_decode_Map_String_list_String_None(dynamic raw);
+
+  @protected
   String dco_decode_String(dynamic raw);
 
   @protected
   bool dco_decode_bool(dynamic raw);
+
+  @protected
+  CircomProofResult dco_decode_box_autoadd_circom_proof_result(dynamic raw);
+
+  @protected
+  CircomProof dco_decode_circom_proof(dynamic raw);
+
+  @protected
+  CircomProofResult dco_decode_circom_proof_result(dynamic raw);
+
+  @protected
+  G1 dco_decode_g_1(dynamic raw);
+
+  @protected
+  G2 dco_decode_g_2(dynamic raw);
+
+  @protected
+  Halo2ProofResult dco_decode_halo_2_proof_result(dynamic raw);
+
+  @protected
+  int dco_decode_i_32(dynamic raw);
 
   @protected
   List<String> dco_decode_list_String(dynamic raw);
@@ -36,7 +60,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
   @protected
-  String? dco_decode_opt_String(dynamic raw);
+  List<(String, List<String>)> dco_decode_list_record_string_list_string(
+    dynamic raw,
+  );
+
+  @protected
+  ProofLib dco_decode_proof_lib(dynamic raw);
+
+  @protected
+  (String, List<String>) dco_decode_record_string_list_string(dynamic raw);
 
   @protected
   int dco_decode_u_8(dynamic raw);
@@ -45,10 +77,40 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void dco_decode_unit(dynamic raw);
 
   @protected
+  Map<String, List<String>> sse_decode_Map_String_list_String_None(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   String sse_decode_String(SseDeserializer deserializer);
 
   @protected
   bool sse_decode_bool(SseDeserializer deserializer);
+
+  @protected
+  CircomProofResult sse_decode_box_autoadd_circom_proof_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  CircomProof sse_decode_circom_proof(SseDeserializer deserializer);
+
+  @protected
+  CircomProofResult sse_decode_circom_proof_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  G1 sse_decode_g_1(SseDeserializer deserializer);
+
+  @protected
+  G2 sse_decode_g_2(SseDeserializer deserializer);
+
+  @protected
+  Halo2ProofResult sse_decode_halo_2_proof_result(SseDeserializer deserializer);
+
+  @protected
+  int sse_decode_i_32(SseDeserializer deserializer);
 
   @protected
   List<String> sse_decode_list_String(SseDeserializer deserializer);
@@ -60,7 +122,17 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
-  String? sse_decode_opt_String(SseDeserializer deserializer);
+  List<(String, List<String>)> sse_decode_list_record_string_list_string(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ProofLib sse_decode_proof_lib(SseDeserializer deserializer);
+
+  @protected
+  (String, List<String>) sse_decode_record_string_list_string(
+    SseDeserializer deserializer,
+  );
 
   @protected
   int sse_decode_u_8(SseDeserializer deserializer);
@@ -69,13 +141,46 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_decode_unit(SseDeserializer deserializer);
 
   @protected
-  int sse_decode_i_32(SseDeserializer deserializer);
+  void sse_encode_Map_String_list_String_None(
+    Map<String, List<String>> self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_String(String self, SseSerializer serializer);
 
   @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_box_autoadd_circom_proof_result(
+    CircomProofResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_circom_proof(CircomProof self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_circom_proof_result(
+    CircomProofResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_g_1(G1 self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_g_2(G2 self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_halo_2_proof_result(
+    Halo2ProofResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_i_32(int self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_String(List<String> self, SseSerializer serializer);
@@ -90,16 +195,25 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_opt_String(String? self, SseSerializer serializer);
+  void sse_encode_list_record_string_list_string(
+    List<(String, List<String>)> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_proof_lib(ProofLib self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_record_string_list_string(
+    (String, List<String>) self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_u_8(int self, SseSerializer serializer);
 
   @protected
   void sse_encode_unit(void self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_i_32(int self, SseSerializer serializer);
 }
 
 // Section: wire_class

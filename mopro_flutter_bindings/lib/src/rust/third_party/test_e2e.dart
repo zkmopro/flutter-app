@@ -8,68 +8,169 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 Future<void> initApp() => RustLib.instance.api.testE2EInitApp();
 
-/// Generates a Noir proof with automatic hash function selection
-///
-/// This is the main proof generation function that automatically chooses
-/// the appropriate hash function based on the intended use case:
-///
-/// - `on_chain = true`: Uses Keccak hash for Solidity verifier compatibility
-/// - `on_chain = false`: Uses Poseidon hash for better performance
-Future<Uint8List> generateNoirProof({
-  required String circuitPath,
-  String? srsPath,
-  required List<String> inputs,
-  required bool onChain,
-  required List<int> vk,
-  required bool lowMemoryMode,
-}) => RustLib.instance.api.testE2EGenerateNoirProof(
-  circuitPath: circuitPath,
-  srsPath: srsPath,
-  inputs: inputs,
-  onChain: onChain,
-  vk: vk,
-  lowMemoryMode: lowMemoryMode,
+Future<CircomProofResult> generateCircomProof({
+  required String zkeyPath,
+  required String circuitInputs,
+  required ProofLib proofLib,
+}) => RustLib.instance.api.testE2EGenerateCircomProof(
+  zkeyPath: zkeyPath,
+  circuitInputs: circuitInputs,
+  proofLib: proofLib,
 );
 
-/// Verifies a Noir proof with automatic hash function selection
-///
-/// This function automatically uses the correct verification method based
-/// on how the proof was generated:
-///
-/// - `on_chain = true`: Verifies Keccak-based proof (Solidity compatible)
-/// - `on_chain = false`: Verifies Poseidon-based proof (performance optimized)
-Future<bool> verifyNoirProof({
-  required String circuitPath,
+Future<bool> verifyCircomProof({
+  required String zkeyPath,
+  required CircomProofResult proofResult,
+  required ProofLib proofLib,
+}) => RustLib.instance.api.testE2EVerifyCircomProof(
+  zkeyPath: zkeyPath,
+  proofResult: proofResult,
+  proofLib: proofLib,
+);
+
+Future<Halo2ProofResult> generateHalo2Proof({
+  required String srsPath,
+  required String pkPath,
+  required Map<String, List<String>> circuitInputs,
+}) => RustLib.instance.api.testE2EGenerateHalo2Proof(
+  srsPath: srsPath,
+  pkPath: pkPath,
+  circuitInputs: circuitInputs,
+);
+
+Future<bool> verifyHalo2Proof({
+  required String srsPath,
+  required String vkPath,
   required List<int> proof,
-  required bool onChain,
-  required List<int> vk,
-  required bool lowMemoryMode,
-}) => RustLib.instance.api.testE2EVerifyNoirProof(
-  circuitPath: circuitPath,
-  proof: proof,
-  onChain: onChain,
-  vk: vk,
-  lowMemoryMode: lowMemoryMode,
-);
-
-/// Generates a verification key with automatic hash function selection
-///
-/// This function automatically chooses the appropriate hash function based
-/// on the intended use case:
-///
-/// - `on_chain = true`: Uses Keccak hash for Solidity verifier compatibility
-/// - `on_chain = false`: Uses Poseidon hash for better performance
-Future<Uint8List> getNoirVerificationKey({
-  required String circuitPath,
-  String? srsPath,
-  required bool onChain,
-  required bool lowMemoryMode,
-}) => RustLib.instance.api.testE2EGetNoirVerificationKey(
-  circuitPath: circuitPath,
+  required List<int> publicInput,
+}) => RustLib.instance.api.testE2EVerifyHalo2Proof(
   srsPath: srsPath,
-  onChain: onChain,
-  lowMemoryMode: lowMemoryMode,
+  vkPath: vkPath,
+  proof: proof,
+  publicInput: publicInput,
 );
 
 Future<String> greet({required String name}) =>
     RustLib.instance.api.testE2EGreet(name: name);
+
+class CircomProof {
+  final G1 a;
+  final G2 b;
+  final G1 c;
+  final String protocol;
+  final String curve;
+
+  const CircomProof({
+    required this.a,
+    required this.b,
+    required this.c,
+    required this.protocol,
+    required this.curve,
+  });
+
+  static Future<CircomProof> default_() =>
+      RustLib.instance.api.testE2ECircomProofDefault();
+
+  @override
+  int get hashCode =>
+      a.hashCode ^ b.hashCode ^ c.hashCode ^ protocol.hashCode ^ curve.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CircomProof &&
+          runtimeType == other.runtimeType &&
+          a == other.a &&
+          b == other.b &&
+          c == other.c &&
+          protocol == other.protocol &&
+          curve == other.curve;
+}
+
+class CircomProofResult {
+  final CircomProof proof;
+  final List<String> inputs;
+
+  const CircomProofResult({required this.proof, required this.inputs});
+
+  @override
+  int get hashCode => proof.hashCode ^ inputs.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CircomProofResult &&
+          runtimeType == other.runtimeType &&
+          proof == other.proof &&
+          inputs == other.inputs;
+}
+
+class G1 {
+  final String x;
+  final String y;
+  final String z;
+
+  const G1({required this.x, required this.y, required this.z});
+
+  static Future<G1> default_() => RustLib.instance.api.testE2EG1Default();
+
+  @override
+  int get hashCode => x.hashCode ^ y.hashCode ^ z.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is G1 &&
+          runtimeType == other.runtimeType &&
+          x == other.x &&
+          y == other.y &&
+          z == other.z;
+}
+
+class G2 {
+  final List<String> x;
+  final List<String> y;
+  final List<String> z;
+
+  const G2({required this.x, required this.y, required this.z});
+
+  static Future<G2> default_() => RustLib.instance.api.testE2EG2Default();
+
+  @override
+  int get hashCode => x.hashCode ^ y.hashCode ^ z.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is G2 &&
+          runtimeType == other.runtimeType &&
+          x == other.x &&
+          y == other.y &&
+          z == other.z;
+}
+
+class Halo2ProofResult {
+  final Uint8List proof;
+  final Uint8List inputs;
+
+  const Halo2ProofResult({required this.proof, required this.inputs});
+
+  @override
+  int get hashCode => proof.hashCode ^ inputs.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Halo2ProofResult &&
+          runtimeType == other.runtimeType &&
+          proof == other.proof &&
+          inputs == other.inputs;
+}
+
+enum ProofLib {
+  arkworks,
+  rapidsnark;
+
+  static Future<ProofLib> default_() =>
+      RustLib.instance.api.testE2EProofLibDefault();
+}

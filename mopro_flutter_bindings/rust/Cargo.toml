@@ -2,11 +2,14 @@
 flutter_rust_bridge = "=2.11.1"
 
 [dependencies.test-e2e]
-git = "https://github.com/vivianjeng/mopro-refactor.git"
+path = "/Users/zhengyawen/Documents/GitHub/mopro-refactor/test-e2e"
 version = "0.1.0"
 
 [lib]
-crate-type = ["cdylib", "staticlib"]
+crate-type = [
+    "cdylib",
+    "staticlib",
+]
 
 [lints.rust.unexpected_cfgs]
 check-cfg = ["cfg(frb_expand)"]

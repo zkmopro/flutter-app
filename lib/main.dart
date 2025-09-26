@@ -298,11 +298,11 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                         final vkPath = await copyAssetToFileSystem(
                             'assets/plonk_fibonacci_vk.bin');
                         valid = await verifyHalo2Proof(
-                          srsPath: srsPath,
-                          vkPath: vkPath,
-                          proof: proofResult!.proof,
-                          publicInput: proofResult.inputs,
-                        );
+                            srsPath: srsPath,
+                            vkPath: vkPath,
+                            proof: proofResult!.proof,
+                            publicInput: proofResult.inputs,
+                          );
                       } on Exception catch (e) {
                         print("Error: $e");
                         valid = false;
@@ -432,12 +432,12 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                             final srsPath = await copyAssetToFileSystem(
                                 'assets/noir_multiplier2.srs');
                             // If VK doesn't exist in assets, generate it
-                            // _noirVerificationKey = await getNoirVerificationKey(
-                            //   circuitPath: circuitPath,
-                            //   srsPath: srsPath,
-                            //   onChain: onChain,
-                            //   lowMemoryMode: lowMemoryMode,
-                            // );
+                            _noirVerificationKey = await getNoirVerificationKey(
+                              circuitPath: circuitPath,
+                              srsPath: srsPath,
+                              onChain: onChain,
+                              lowMemoryMode: lowMemoryMode,
+                            );
                           }
                         }
 
@@ -445,13 +445,13 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                             'assets/noir_multiplier2.json');
                         final srsPath = await copyAssetToFileSystem(
                             'assets/noir_multiplier2.srs');
-                        // noirProofResult = await generateNoirProof(
-                        //     circuitPath: circuitPath,
-                        //     srsPath: srsPath,
-                        //     inputs: inputs,
-                        //     onChain: onChain,
-                        //     vk: _noirVerificationKey!,
-                        //     lowMemoryMode: lowMemoryMode);
+                        noirProofResult = await generateNoirProof(
+                            circuitPath: circuitPath,
+                            srsPath: srsPath,
+                            inputs: inputs,
+                            onChain: onChain,
+                            vk: _noirVerificationKey!,
+                            lowMemoryMode: lowMemoryMode);
                       } on Exception catch (e) {
                         print("Error: $e");
                         noirProofResult = null;
@@ -501,13 +501,13 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
                             true; // Use Keccak for Solidity compatibility
                         const bool lowMemoryMode = false;
 
-                        // valid = await verifyNoirProof(
-                        //   circuitPath: circuitPath,
-                        //   proof: proofResult!,
-                        //   onChain: onChain,
-                        //   vk: vk,
-                        //   lowMemoryMode: lowMemoryMode,
-                        // );
+                        valid = await verifyNoirProof(
+                          circuitPath: circuitPath,
+                          proof: proofResult!,
+                          onChain: onChain,
+                          vk: vk,
+                          lowMemoryMode: lowMemoryMode,
+                        );
                       } on Exception catch (e) {
                         print("Error: $e");
                         valid = false;

@@ -37,7 +37,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -234132211;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 712606805;
 
 // Section: executor
 
@@ -214,6 +214,92 @@ fn wire__test_e2e__generate_halo2_proof_impl(
                         api_pk_path,
                         api_circuit_inputs,
                     ))?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__test_e2e__generate_noir_proof_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "generate_noir_proof",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_circuit_path = <String>::sse_decode(&mut deserializer);
+            let api_srs_path = <Option<String>>::sse_decode(&mut deserializer);
+            let api_inputs = <Vec<String>>::sse_decode(&mut deserializer);
+            let api_on_chain = <bool>::sse_decode(&mut deserializer);
+            let api_vk = <Vec<u8>>::sse_decode(&mut deserializer);
+            let api_low_memory_mode = <bool>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, String>((move || {
+                    let output_ok = test_e2e::generate_noir_proof(
+                        api_circuit_path,
+                        api_srs_path,
+                        api_inputs,
+                        api_on_chain,
+                        api_vk,
+                        api_low_memory_mode,
+                    )?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__test_e2e__get_noir_verification_key_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "get_noir_verification_key",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_circuit_path = <String>::sse_decode(&mut deserializer);
+            let api_srs_path = <Option<String>>::sse_decode(&mut deserializer);
+            let api_on_chain = <bool>::sse_decode(&mut deserializer);
+            let api_low_memory_mode = <bool>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, String>((move || {
+                    let output_ok = test_e2e::get_noir_verification_key(
+                        api_circuit_path,
+                        api_srs_path,
+                        api_on_chain,
+                        api_low_memory_mode,
+                    )?;
                     Ok(output_ok)
                 })())
             }
@@ -399,6 +485,49 @@ fn wire__test_e2e__verify_halo2_proof_impl(
         },
     )
 }
+fn wire__test_e2e__verify_noir_proof_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "verify_noir_proof",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_circuit_path = <String>::sse_decode(&mut deserializer);
+            let api_proof = <Vec<u8>>::sse_decode(&mut deserializer);
+            let api_on_chain = <bool>::sse_decode(&mut deserializer);
+            let api_vk = <Vec<u8>>::sse_decode(&mut deserializer);
+            let api_low_memory_mode = <bool>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, String>((move || {
+                    let output_ok = test_e2e::verify_noir_proof(
+                        api_circuit_path,
+                        api_proof,
+                        api_on_chain,
+                        api_vk,
+                        api_low_memory_mode,
+                    )?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 
 // Section: static_checks
 
@@ -574,6 +703,17 @@ impl SseDecode for Vec<(String, Vec<String>)> {
     }
 }
 
+impl SseDecode for Option<String> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<String>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
 impl SseDecode for test_e2e::ProofLib {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -621,11 +761,14 @@ fn pde_ffi_dispatcher_primary_impl(
         3 => wire__test_e2e__g_2_default_impl(port, ptr, rust_vec_len, data_len),
         4 => wire__test_e2e__generate_circom_proof_impl(port, ptr, rust_vec_len, data_len),
         5 => wire__test_e2e__generate_halo2_proof_impl(port, ptr, rust_vec_len, data_len),
-        6 => wire__test_e2e__greet_impl(port, ptr, rust_vec_len, data_len),
-        7 => wire__test_e2e__init_app_impl(port, ptr, rust_vec_len, data_len),
-        8 => wire__test_e2e__proof_lib_default_impl(port, ptr, rust_vec_len, data_len),
-        9 => wire__test_e2e__verify_circom_proof_impl(port, ptr, rust_vec_len, data_len),
-        10 => wire__test_e2e__verify_halo2_proof_impl(port, ptr, rust_vec_len, data_len),
+        6 => wire__test_e2e__generate_noir_proof_impl(port, ptr, rust_vec_len, data_len),
+        7 => wire__test_e2e__get_noir_verification_key_impl(port, ptr, rust_vec_len, data_len),
+        8 => wire__test_e2e__greet_impl(port, ptr, rust_vec_len, data_len),
+        9 => wire__test_e2e__init_app_impl(port, ptr, rust_vec_len, data_len),
+        10 => wire__test_e2e__proof_lib_default_impl(port, ptr, rust_vec_len, data_len),
+        11 => wire__test_e2e__verify_circom_proof_impl(port, ptr, rust_vec_len, data_len),
+        12 => wire__test_e2e__verify_halo2_proof_impl(port, ptr, rust_vec_len, data_len),
+        13 => wire__test_e2e__verify_noir_proof_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -863,6 +1006,16 @@ impl SseEncode for Vec<(String, Vec<String>)> {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <(String, Vec<String>)>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<String> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <String>::sse_encode(value, serializer);
         }
     }
 }

@@ -50,6 +50,69 @@ Future<bool> verifyHalo2Proof({
   publicInput: publicInput,
 );
 
+/// Generates a Noir proof with automatic hash function selection
+///
+/// This is the main proof generation function that automatically chooses
+/// the appropriate hash function based on the intended use case:
+///
+/// - `on_chain = true`: Uses Keccak hash for Solidity verifier compatibility
+/// - `on_chain = false`: Uses Poseidon hash for better performance
+Future<Uint8List> generateNoirProof({
+  required String circuitPath,
+  String? srsPath,
+  required List<String> inputs,
+  required bool onChain,
+  required List<int> vk,
+  required bool lowMemoryMode,
+}) => RustLib.instance.api.testE2EGenerateNoirProof(
+  circuitPath: circuitPath,
+  srsPath: srsPath,
+  inputs: inputs,
+  onChain: onChain,
+  vk: vk,
+  lowMemoryMode: lowMemoryMode,
+);
+
+/// Verifies a Noir proof with automatic hash function selection
+///
+/// This function automatically uses the correct verification method based
+/// on how the proof was generated:
+///
+/// - `on_chain = true`: Verifies Keccak-based proof (Solidity compatible)
+/// - `on_chain = false`: Verifies Poseidon-based proof (performance optimized)
+Future<bool> verifyNoirProof({
+  required String circuitPath,
+  required List<int> proof,
+  required bool onChain,
+  required List<int> vk,
+  required bool lowMemoryMode,
+}) => RustLib.instance.api.testE2EVerifyNoirProof(
+  circuitPath: circuitPath,
+  proof: proof,
+  onChain: onChain,
+  vk: vk,
+  lowMemoryMode: lowMemoryMode,
+);
+
+/// Generates a verification key with automatic hash function selection
+///
+/// This function automatically chooses the appropriate hash function based
+/// on the intended use case:
+///
+/// - `on_chain = true`: Uses Keccak hash for Solidity verifier compatibility
+/// - `on_chain = false`: Uses Poseidon hash for better performance
+Future<Uint8List> getNoirVerificationKey({
+  required String circuitPath,
+  String? srsPath,
+  required bool onChain,
+  required bool lowMemoryMode,
+}) => RustLib.instance.api.testE2EGetNoirVerificationKey(
+  circuitPath: circuitPath,
+  srsPath: srsPath,
+  onChain: onChain,
+  lowMemoryMode: lowMemoryMode,
+);
+
 Future<String> greet({required String name}) =>
     RustLib.instance.api.testE2EGreet(name: name);
 

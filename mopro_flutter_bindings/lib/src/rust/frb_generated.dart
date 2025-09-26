@@ -64,7 +64,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.11.1';
 
   @override
-  int get rustContentHash => -234132211;
+  int get rustContentHash => 712606805;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -93,6 +93,22 @@ abstract class RustLibApi extends BaseApi {
     required Map<String, List<String>> circuitInputs,
   });
 
+  Future<Uint8List> testE2EGenerateNoirProof({
+    required String circuitPath,
+    String? srsPath,
+    required List<String> inputs,
+    required bool onChain,
+    required List<int> vk,
+    required bool lowMemoryMode,
+  });
+
+  Future<Uint8List> testE2EGetNoirVerificationKey({
+    required String circuitPath,
+    String? srsPath,
+    required bool onChain,
+    required bool lowMemoryMode,
+  });
+
   Future<String> testE2EGreet({required String name});
 
   Future<void> testE2EInitApp();
@@ -110,6 +126,14 @@ abstract class RustLibApi extends BaseApi {
     required String vkPath,
     required List<int> proof,
     required List<int> publicInput,
+  });
+
+  Future<bool> testE2EVerifyNoirProof({
+    required String circuitPath,
+    required List<int> proof,
+    required bool onChain,
+    required List<int> vk,
+    required bool lowMemoryMode,
   });
 }
 
@@ -275,6 +299,94 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   );
 
   @override
+  Future<Uint8List> testE2EGenerateNoirProof({
+    required String circuitPath,
+    String? srsPath,
+    required List<String> inputs,
+    required bool onChain,
+    required List<int> vk,
+    required bool lowMemoryMode,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(circuitPath, serializer);
+          sse_encode_opt_String(srsPath, serializer);
+          sse_encode_list_String(inputs, serializer);
+          sse_encode_bool(onChain, serializer);
+          sse_encode_list_prim_u_8_loose(vk, serializer);
+          sse_encode_bool(lowMemoryMode, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 6,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_list_prim_u_8_strict,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kTestE2EGenerateNoirProofConstMeta,
+        argValues: [circuitPath, srsPath, inputs, onChain, vk, lowMemoryMode],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kTestE2EGenerateNoirProofConstMeta => const TaskConstMeta(
+    debugName: "generate_noir_proof",
+    argNames: [
+      "circuitPath",
+      "srsPath",
+      "inputs",
+      "onChain",
+      "vk",
+      "lowMemoryMode",
+    ],
+  );
+
+  @override
+  Future<Uint8List> testE2EGetNoirVerificationKey({
+    required String circuitPath,
+    String? srsPath,
+    required bool onChain,
+    required bool lowMemoryMode,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(circuitPath, serializer);
+          sse_encode_opt_String(srsPath, serializer);
+          sse_encode_bool(onChain, serializer);
+          sse_encode_bool(lowMemoryMode, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 7,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_list_prim_u_8_strict,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kTestE2EGetNoirVerificationKeyConstMeta,
+        argValues: [circuitPath, srsPath, onChain, lowMemoryMode],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kTestE2EGetNoirVerificationKeyConstMeta =>
+      const TaskConstMeta(
+        debugName: "get_noir_verification_key",
+        argNames: ["circuitPath", "srsPath", "onChain", "lowMemoryMode"],
+      );
+
+  @override
   Future<String> testE2EGreet({required String name}) {
     return handler.executeNormal(
       NormalTask(
@@ -284,7 +396,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 6,
+            funcId: 8,
             port: port_,
           );
         },
@@ -311,7 +423,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 7,
+            funcId: 9,
             port: port_,
           );
         },
@@ -338,7 +450,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 8,
+            funcId: 10,
             port: port_,
           );
         },
@@ -372,7 +484,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 9,
+            funcId: 11,
             port: port_,
           );
         },
@@ -410,7 +522,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 10,
+            funcId: 12,
             port: port_,
           );
         },
@@ -428,6 +540,46 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kTestE2EVerifyHalo2ProofConstMeta => const TaskConstMeta(
     debugName: "verify_halo2_proof",
     argNames: ["srsPath", "vkPath", "proof", "publicInput"],
+  );
+
+  @override
+  Future<bool> testE2EVerifyNoirProof({
+    required String circuitPath,
+    required List<int> proof,
+    required bool onChain,
+    required List<int> vk,
+    required bool lowMemoryMode,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(circuitPath, serializer);
+          sse_encode_list_prim_u_8_loose(proof, serializer);
+          sse_encode_bool(onChain, serializer);
+          sse_encode_list_prim_u_8_loose(vk, serializer);
+          sse_encode_bool(lowMemoryMode, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 13,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_bool,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kTestE2EVerifyNoirProofConstMeta,
+        argValues: [circuitPath, proof, onChain, vk, lowMemoryMode],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kTestE2EVerifyNoirProofConstMeta => const TaskConstMeta(
+    debugName: "verify_noir_proof",
+    argNames: ["circuitPath", "proof", "onChain", "vk", "lowMemoryMode"],
   );
 
   @protected
@@ -557,6 +709,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     return (raw as List<dynamic>)
         .map(dco_decode_record_string_list_string)
         .toList();
+  }
+
+  @protected
+  String? dco_decode_opt_String(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_String(raw);
   }
 
   @protected
@@ -719,6 +877,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  String? sse_decode_opt_String(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_String(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
   ProofLib sse_decode_proof_lib(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var inner = sse_decode_i_32(deserializer);
@@ -871,6 +1040,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
       sse_encode_record_string_list_string(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_String(String? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_String(self, serializer);
     }
   }
 

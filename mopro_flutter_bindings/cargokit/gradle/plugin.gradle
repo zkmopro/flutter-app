@@ -141,8 +141,8 @@ class CargoKitPlugin implements Plugin<Project> {
 
             // Same thing addFlutterDependencies does in flutter.gradle
             if (buildType == "debug") {
-                platforms.add("android-x86")
-                platforms.add("android-x64")
+        
+        
             }
 
             // The task name depends on plugin properties, which are not available
@@ -178,6 +178,32 @@ class CargoKitPlugin implements Plugin<Project> {
                 }
                 project.tasks.each onTask
                 project.tasks.whenTaskAdded onTask
+
+                // After cargo build in CargoKitBuildTask.build()
+                def outputDir = new File(cargoOutputDir) // should be build/jniLibs/<buildType>
+
+                // Source path in your NDK sysroot
+                def ndkDir = plugin.project.android.ndkDirectory
+
+                // Map Gradle ABI -> NDK triple dir
+                def abiMap = [
+                    "arm64-v8a" : "aarch64-linux-android",
+                    "armeabi-v7a" : "arm-linux-androideabi",
+                    "x86"        : "i686-linux-android",
+                    "x86_64"     : "x86_64-linux-android"
+                ]
+
+                abiMap.each { abi, triple ->
+                    def srcLibcxx = new File("${ndkDir}/toolchains/llvm/prebuilt/${Os.isFamily(Os.FAMILY_MAC) ? "darwin-x86_64" : "linux-x86_64"}/sysroot/usr/lib/${triple}/libc++_shared.so")
+                    def destDir = new File("${outputDir}/${abi}")
+                    destDir.mkdirs()
+                    def destLibcxx = new File(destDir, "libc++_shared.so")
+
+                    project.copy {
+                        from srcLibcxx
+                        into destDir
+                    }
+                }
             }
         }
     }

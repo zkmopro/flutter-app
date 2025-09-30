@@ -64,32 +64,34 @@ If you prefer using the terminal to run the app, use the following steps:
 
 The example app comes with a simple prover generated from a Circom circuit. To integrate your own prover, follow the steps below.
 
+> [!WARNING]  
+> In the `frb` branch, the example app uses [`flutter_rust_bridge`](https://github.com/fzyzcjy/flutter_rust_bridge) to generate bindings. If you need to work with `mopro-ffi` or `mopro-cli` versions earlier than `0.3.0`, please switch to the `main` branch or the `v0.2.0` tag.
+
 ### Setup
 
-Follow the [Rust Setup steps from the MoPro official docs](https://zkmopro.org/docs/setup/rust-setup) to generate the platform-specific libraries.
+-   Install the latest mopro CLI on GitHub
+
+```sh
+git clone https://github.com/zkmopro/mopro
+cd mopro/cli
+cargo install --path .
+```
+
+<!-- TODO: publish this version of mopro-cli -->
+
+-   Follow the [Getting Started](https://zkmopro.org/docs/getting-started/) guide to run
+    ```sh
+    mopro init
+    ```
+    (select your preferred adapter) and then
+    ```sh
+    mopro build
+    ```
+    to generate the `mopro_flutter_bindings`.
 
 ### Copying The Generated Libraries
 
-#### iOS
-
-1. Replace `mopro.swift` at [`mopro_flutter_plugin/ios/Classes/mopro.swift`](mopro_flutter_plugin/ios/Classes/mopro.swift) with the file generated during the [Setup](#setup).
-2. Replace the directory [`mopro_flutter_plugin/ios/MoproBindings.xcframework`](mopro_flutter_plugin/ios/MoproBindings.xcframework) with the one generated during the [Setup](#setup).
-3. Then define the native module API in [`mopro_flutter_plugin/ios/Classes/MoproFlutterPlugin.swift`](mopro_flutter_plugin/ios/Classes/MoproFlutterPlugin.swift) to match the Flutter type. Please refer to [Flutter - Data types support](https://docs.flutter.dev/platform-integration/platform-channels#codec)
-
-#### Android
-
-1. Replace the directory [`mopro_flutter_plugin/android/src/main/jniLibs`](mopro_flutter_plugin/android/src/main/jniLibs) with the one generated during the [Setup](#setup).
-2. Replace `mopro.kt` at [`mopro_flutter_plugin/android/src/main/kotlin/uniffi/mopro/mopro.kt`](mopro_flutter_plugin/android/src/main/kotlin/uniffi/mopro/mopro.kt) with the file generated during the [Setup](#setup).
-3. Then define the native module API in [`mopro_flutter_plugin/android/src/main/kotlin/com/example/mopro_flutter/MoproFlutterPlugin.kt`](mopro_flutter_plugin/android/src/main/kotlin/com/example/mopro_flutter/MoproFlutterPlugin.kt) to match the Flutter type. Please refer to [Flutter - Data types support](https://docs.flutter.dev/platform-integration/platform-channels#codec)
-
-### Flutter Module
-
-1.  Define Flutter's platform channel APIs to pass messages between Flutter and your desired platforms.
-
--   [`mopro_flutter_plugin/lib/mopro_flutter_method_channel.dart`](mopro_flutter_plugin/lib/mopro_flutter_method_channel.dart)
--   [`mopro_flutter_plugin/lib/mopro_flutter_platform_interface.dart`](mopro_flutter_plugin/lib/mopro_flutter_platform_interface.dart)
--   [`mopro_flutter_plugin/lib/mopro_flutter.dart`](mopro_flutter_plugin/lib/mopro_flutter.dart)
--   ([`mopro_flutter_plugin/lib/mopro_types.dart`](mopro_flutter_plugin/lib/mopro_types.dart))
+After running `mopro build`, copy the generated `mopro_flutter_bindings`. If you add new functions with `flutter_rust_bridge` and want to use them in Flutter, run `mopro build` again to regenerate and update the bindings.
 
 ### zKey
 
@@ -104,7 +106,10 @@ Follow the [Rust Setup steps from the MoPro official docs](https://zkmopro.org/d
 
     ```dart
     var inputs = "{\"a\":[\"3\"],\"b\":[\"5\"]}";
-    proofResult = await _moproFlutterPlugin.generateCircomProof("assets/multiplier2_final.zkey", inputs, ProofLib.arkworks);
+    proofResult = await generateCircomProof(
+                        zkeyPath: zkeyPath,
+                        circuitInputs: inputs,
+                        proofLib: ProofLib.arkworks);
     ```
 
 Don't forget to modify the input values for your specific case!

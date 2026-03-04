@@ -23,9 +23,11 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   Halo2ProofResult? _halo2ProofResult;
   Uint8List? _noirProofResult;
   Uint8List? _noirVerificationKey;
+  GnarkProofResult? _gnarkProofResult;
   bool? _circomValid;
   bool? _halo2Valid;
   bool? _noirValid;
+  bool? _gnarkValid;
   bool isProving = false;
   Exception? _error;
   late TabController _tabController;
@@ -36,6 +38,8 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   final TextEditingController _controllerOut = TextEditingController();
   final TextEditingController _controllerNoirA = TextEditingController();
   final TextEditingController _controllerNoirB = TextEditingController();
+  final TextEditingController _controllerGnarkX = TextEditingController();
+  final TextEditingController _controllerGnarkY = TextEditingController();
 
   @override
   void initState() {
@@ -45,7 +49,9 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     _controllerOut.text = "55";
     _controllerNoirA.text = "5";
     _controllerNoirB.text = "3";
-    _tabController = TabController(length: 3, vsync: this);
+    _controllerGnarkX.text = "3";
+    _controllerGnarkY.text = "35";
+    _tabController = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -551,6 +557,165 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     );
   }
 
+  Widget _buildGnarkTab() {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (isProving) const CircularProgressIndicator(),
+          if (_error != null)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(_error.toString()),
+            ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(
+              controller: _controllerGnarkX,
+              decoration: const InputDecoration(
+                labelText: "Witness input `X`",
+                hintText: "For example, 3",
+              ),
+              keyboardType: TextInputType.number,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextFormField(
+              controller: _controllerGnarkY,
+              decoration: const InputDecoration(
+                labelText: "Witness output `Y`",
+                hintText: "For example, 35",
+              ),
+              keyboardType: TextInputType.number,
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: OutlinedButton(
+                    onPressed: () async {
+                      if (_controllerGnarkX.text.isEmpty ||
+                          _controllerGnarkY.text.isEmpty ||
+                          isProving) {
+                        return;
+                      }
+                      setState(() {
+                        _error = null;
+                        isProving = true;
+                      });
+
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      GnarkProofResult? gnarkProofResult;
+                      try {
+                        final r1csPath = await copyAssetToFileSystem(
+                            'assets/cubic_circuit.r1cs');
+                        final pkPath = await copyAssetToFileSystem(
+                            'assets/cubic_circuit.pk');
+
+                        final witnessJson =
+                            '{"X": "${_controllerGnarkX.text}", "Y": "${_controllerGnarkY.text}"}';
+
+                        gnarkProofResult = await generateGnarkProof(
+                          r1CsPath: r1csPath,
+                          pkPath: pkPath,
+                          witnessJson: witnessJson,
+                        );
+                      } on Exception catch (e) {
+                        print("Error: $e");
+                        gnarkProofResult = null;
+                        setState(() {
+                          _error = e;
+                        });
+                      }
+
+                      if (!mounted) return;
+
+                      setState(() {
+                        isProving = false;
+                        _gnarkProofResult = gnarkProofResult;
+                      });
+                    },
+                    child: const Text("Generate Proof")),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: OutlinedButton(
+                    onPressed: () async {
+                      if (_controllerGnarkX.text.isEmpty ||
+                          _controllerGnarkY.text.isEmpty ||
+                          isProving) {
+                        return;
+                      }
+                      setState(() {
+                        _error = null;
+                        isProving = true;
+                      });
+
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      bool? valid;
+                      try {
+                        final proofResult = _gnarkProofResult;
+                        if (proofResult == null) {
+                          throw Exception(
+                              "No gnark proof available. Generate a proof first.");
+                        }
+
+                        final r1csPath = await copyAssetToFileSystem(
+                            'assets/cubic_circuit.r1cs');
+                        final vkPath = await copyAssetToFileSystem(
+                            'assets/cubic_circuit.vk');
+
+                        valid = await verifyGnarkProof(
+                          r1CsPath: r1csPath,
+                          vkPath: vkPath,
+                          proofResult: proofResult,
+                        );
+                      } on Exception catch (e) {
+                        print("Error: $e");
+                        valid = false;
+                        setState(() {
+                          _error = e;
+                        });
+                      }
+
+                      if (!mounted) return;
+
+                      setState(() {
+                        _gnarkValid = valid;
+                        isProving = false;
+                      });
+                    },
+                    child: const Text("Verify Proof")),
+              ),
+            ],
+          ),
+          if (_gnarkProofResult != null)
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Proof is valid: ${_gnarkValid ?? false}'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child:
+                      Text('Public inputs: ${_gnarkProofResult?.publicInputs ?? ""}'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text('Proof: ${_gnarkProofResult?.proof ?? ""}'),
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -564,6 +729,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
               Tab(text: 'Circom'),
               Tab(text: 'Halo2'),
               Tab(text: 'Noir'),
+              Tab(text: 'Gnark'),
             ],
           ),
         ),
@@ -573,6 +739,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
             _buildCircomTab(),
             _buildHalo2Tab(),
             _buildNoirTab(),
+            _buildGnarkTab(),
           ],
         ),
       ),

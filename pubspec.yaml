@@ -62,6 +62,9 @@ flutter:
     - assets/noir_multiplier2.json
     - assets/noir_multiplier2.srs
     - assets/noir_multiplier2.vk
+    - assets/cubic_circuit.r1cs
+    - assets/cubic_circuit.pk
+    - assets/cubic_circuit.vk
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

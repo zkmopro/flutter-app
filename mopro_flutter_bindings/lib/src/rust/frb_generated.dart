@@ -9,7 +9,7 @@ import 'frb_generated.dart';
 import 'frb_generated.io.dart'
     if (dart.library.js_interop) 'frb_generated.web.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
-import 'third_party/test_e2e.dart';
+import 'third_party/mopro_example_app.dart';
 
 /// Main entrypoint of the Rust API
 class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
@@ -64,7 +64,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.11.1';
 
   @override
-  int get rustContentHash => 712606805;
+  int get rustContentHash => 969479230;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -75,25 +75,31 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
-  Future<CircomProof> testE2ECircomProofDefault();
+  Future<CircomProof> moproExampleAppCircomProofDefault();
 
-  Future<G1> testE2EG1Default();
+  Future<G1> moproExampleAppG1Default();
 
-  Future<G2> testE2EG2Default();
+  Future<G2> moproExampleAppG2Default();
 
-  Future<CircomProofResult> testE2EGenerateCircomProof({
+  Future<CircomProofResult> moproExampleAppGenerateCircomProof({
     required String zkeyPath,
     required String circuitInputs,
     required ProofLib proofLib,
   });
 
-  Future<Halo2ProofResult> testE2EGenerateHalo2Proof({
+  Future<GnarkProofResult> moproExampleAppGenerateGnarkProof({
+    required String r1CsPath,
+    required String pkPath,
+    required String witnessJson,
+  });
+
+  Future<Halo2ProofResult> moproExampleAppGenerateHalo2Proof({
     required String srsPath,
     required String pkPath,
     required Map<String, List<String>> circuitInputs,
   });
 
-  Future<Uint8List> testE2EGenerateNoirProof({
+  Future<Uint8List> moproExampleAppGenerateNoirProof({
     required String circuitPath,
     String? srsPath,
     required List<String> inputs,
@@ -102,39 +108,57 @@ abstract class RustLibApi extends BaseApi {
     required bool lowMemoryMode,
   });
 
-  Future<Uint8List> testE2EGetNoirVerificationKey({
+  Future<Uint8List> moproExampleAppGetNoirVerificationKey({
     required String circuitPath,
     String? srsPath,
     required bool onChain,
     required bool lowMemoryMode,
   });
 
-  Future<String> testE2EGreet({required String name});
+  Future<Halo2ProofResult> moproExampleAppHalo2ProofResultDefault();
 
-  Future<void> testE2EInitApp();
+  Future<void> moproExampleAppInitApp();
 
-  Future<ProofLib> testE2EProofLibDefault();
+  Future<String> moproExampleAppMoproHelloWorld();
 
-  Future<bool> testE2EVerifyCircomProof({
+  Future<String> moproExampleAppMoproWasmHelloWorld();
+
+  Future<ProofLib> moproExampleAppProofLibDefault();
+
+  Future<bool> moproExampleAppVerifyCircomProof({
     required String zkeyPath,
     required CircomProofResult proofResult,
     required ProofLib proofLib,
   });
 
-  Future<bool> testE2EVerifyHalo2Proof({
+  Future<bool> moproExampleAppVerifyGnarkProof({
+    required String r1CsPath,
+    required String vkPath,
+    required GnarkProofResult proofResult,
+  });
+
+  Future<bool> moproExampleAppVerifyHalo2Proof({
     required String srsPath,
     required String vkPath,
     required List<int> proof,
     required List<int> publicInput,
   });
 
-  Future<bool> testE2EVerifyNoirProof({
+  Future<bool> moproExampleAppVerifyNoirProof({
     required String circuitPath,
     required List<int> proof,
     required bool onChain,
     required List<int> vk,
     required bool lowMemoryMode,
   });
+
+  RustArcIncrementStrongCountFnType
+  get rust_arc_increment_strong_count_MoproError;
+
+  RustArcDecrementStrongCountFnType
+  get rust_arc_decrement_strong_count_MoproError;
+
+  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_MoproErrorPtr;
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -146,7 +170,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   });
 
   @override
-  Future<CircomProof> testE2ECircomProofDefault() {
+  Future<CircomProof> moproExampleAppCircomProofDefault() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -162,18 +186,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeSuccessData: sse_decode_circom_proof,
           decodeErrorData: null,
         ),
-        constMeta: kTestE2ECircomProofDefaultConstMeta,
+        constMeta: kMoproExampleAppCircomProofDefaultConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kTestE2ECircomProofDefaultConstMeta =>
+  TaskConstMeta get kMoproExampleAppCircomProofDefaultConstMeta =>
       const TaskConstMeta(debugName: "circom_proof_default", argNames: []);
 
   @override
-  Future<G1> testE2EG1Default() {
+  Future<G1> moproExampleAppG1Default() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -189,18 +213,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeSuccessData: sse_decode_g_1,
           decodeErrorData: null,
         ),
-        constMeta: kTestE2Eg1DefaultConstMeta,
+        constMeta: kMoproExampleAppG1DefaultConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kTestE2Eg1DefaultConstMeta =>
+  TaskConstMeta get kMoproExampleAppG1DefaultConstMeta =>
       const TaskConstMeta(debugName: "g_1_default", argNames: []);
 
   @override
-  Future<G2> testE2EG2Default() {
+  Future<G2> moproExampleAppG2Default() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -216,18 +240,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           decodeSuccessData: sse_decode_g_2,
           decodeErrorData: null,
         ),
-        constMeta: kTestE2Eg2DefaultConstMeta,
+        constMeta: kMoproExampleAppG2DefaultConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kTestE2Eg2DefaultConstMeta =>
+  TaskConstMeta get kMoproExampleAppG2DefaultConstMeta =>
       const TaskConstMeta(debugName: "g_2_default", argNames: []);
 
   @override
-  Future<CircomProofResult> testE2EGenerateCircomProof({
+  Future<CircomProofResult> moproExampleAppGenerateCircomProof({
     required String zkeyPath,
     required String circuitInputs,
     required ProofLib proofLib,
@@ -248,22 +272,62 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_circom_proof_result,
-          decodeErrorData: null,
+          decodeErrorData:
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError,
         ),
-        constMeta: kTestE2EGenerateCircomProofConstMeta,
+        constMeta: kMoproExampleAppGenerateCircomProofConstMeta,
         argValues: [zkeyPath, circuitInputs, proofLib],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kTestE2EGenerateCircomProofConstMeta => const TaskConstMeta(
-    debugName: "generate_circom_proof",
-    argNames: ["zkeyPath", "circuitInputs", "proofLib"],
-  );
+  TaskConstMeta get kMoproExampleAppGenerateCircomProofConstMeta =>
+      const TaskConstMeta(
+        debugName: "generate_circom_proof",
+        argNames: ["zkeyPath", "circuitInputs", "proofLib"],
+      );
 
   @override
-  Future<Halo2ProofResult> testE2EGenerateHalo2Proof({
+  Future<GnarkProofResult> moproExampleAppGenerateGnarkProof({
+    required String r1CsPath,
+    required String pkPath,
+    required String witnessJson,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(r1CsPath, serializer);
+          sse_encode_String(pkPath, serializer);
+          sse_encode_String(witnessJson, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 5,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_gnark_proof_result,
+          decodeErrorData:
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError,
+        ),
+        constMeta: kMoproExampleAppGenerateGnarkProofConstMeta,
+        argValues: [r1CsPath, pkPath, witnessJson],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kMoproExampleAppGenerateGnarkProofConstMeta =>
+      const TaskConstMeta(
+        debugName: "generate_gnark_proof",
+        argNames: ["r1CsPath", "pkPath", "witnessJson"],
+      );
+
+  @override
+  Future<Halo2ProofResult> moproExampleAppGenerateHalo2Proof({
     required String srsPath,
     required String pkPath,
     required Map<String, List<String>> circuitInputs,
@@ -278,28 +342,30 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 5,
+            funcId: 6,
             port: port_,
           );
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_halo_2_proof_result,
-          decodeErrorData: null,
+          decodeErrorData:
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError,
         ),
-        constMeta: kTestE2EGenerateHalo2ProofConstMeta,
+        constMeta: kMoproExampleAppGenerateHalo2ProofConstMeta,
         argValues: [srsPath, pkPath, circuitInputs],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kTestE2EGenerateHalo2ProofConstMeta => const TaskConstMeta(
-    debugName: "generate_halo2_proof",
-    argNames: ["srsPath", "pkPath", "circuitInputs"],
-  );
+  TaskConstMeta get kMoproExampleAppGenerateHalo2ProofConstMeta =>
+      const TaskConstMeta(
+        debugName: "generate_halo2_proof",
+        argNames: ["srsPath", "pkPath", "circuitInputs"],
+      );
 
   @override
-  Future<Uint8List> testE2EGenerateNoirProof({
+  Future<Uint8List> moproExampleAppGenerateNoirProof({
     required String circuitPath,
     String? srsPath,
     required List<String> inputs,
@@ -320,35 +386,37 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 6,
+            funcId: 7,
             port: port_,
           );
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_list_prim_u_8_strict,
-          decodeErrorData: sse_decode_String,
+          decodeErrorData:
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError,
         ),
-        constMeta: kTestE2EGenerateNoirProofConstMeta,
+        constMeta: kMoproExampleAppGenerateNoirProofConstMeta,
         argValues: [circuitPath, srsPath, inputs, onChain, vk, lowMemoryMode],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kTestE2EGenerateNoirProofConstMeta => const TaskConstMeta(
-    debugName: "generate_noir_proof",
-    argNames: [
-      "circuitPath",
-      "srsPath",
-      "inputs",
-      "onChain",
-      "vk",
-      "lowMemoryMode",
-    ],
-  );
+  TaskConstMeta get kMoproExampleAppGenerateNoirProofConstMeta =>
+      const TaskConstMeta(
+        debugName: "generate_noir_proof",
+        argNames: [
+          "circuitPath",
+          "srsPath",
+          "inputs",
+          "onChain",
+          "vk",
+          "lowMemoryMode",
+        ],
+      );
 
   @override
-  Future<Uint8List> testE2EGetNoirVerificationKey({
+  Future<Uint8List> moproExampleAppGetNoirVerificationKey({
     required String circuitPath,
     String? srsPath,
     required bool onChain,
@@ -365,57 +433,30 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 7,
+            funcId: 8,
             port: port_,
           );
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_list_prim_u_8_strict,
-          decodeErrorData: sse_decode_String,
+          decodeErrorData:
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError,
         ),
-        constMeta: kTestE2EGetNoirVerificationKeyConstMeta,
+        constMeta: kMoproExampleAppGetNoirVerificationKeyConstMeta,
         argValues: [circuitPath, srsPath, onChain, lowMemoryMode],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kTestE2EGetNoirVerificationKeyConstMeta =>
+  TaskConstMeta get kMoproExampleAppGetNoirVerificationKeyConstMeta =>
       const TaskConstMeta(
         debugName: "get_noir_verification_key",
         argNames: ["circuitPath", "srsPath", "onChain", "lowMemoryMode"],
       );
 
   @override
-  Future<String> testE2EGreet({required String name}) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          final serializer = SseSerializer(generalizedFrbRustBinding);
-          sse_encode_String(name, serializer);
-          pdeCallFfi(
-            generalizedFrbRustBinding,
-            serializer,
-            funcId: 8,
-            port: port_,
-          );
-        },
-        codec: SseCodec(
-          decodeSuccessData: sse_decode_String,
-          decodeErrorData: null,
-        ),
-        constMeta: kTestE2EGreetConstMeta,
-        argValues: [name],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kTestE2EGreetConstMeta =>
-      const TaskConstMeta(debugName: "greet", argNames: ["name"]);
-
-  @override
-  Future<void> testE2EInitApp() {
+  Future<Halo2ProofResult> moproExampleAppHalo2ProofResultDefault() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -428,21 +469,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           );
         },
         codec: SseCodec(
-          decodeSuccessData: sse_decode_unit,
+          decodeSuccessData: sse_decode_halo_2_proof_result,
           decodeErrorData: null,
         ),
-        constMeta: kTestE2EInitAppConstMeta,
+        constMeta: kMoproExampleAppHalo2ProofResultDefaultConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kTestE2EInitAppConstMeta =>
-      const TaskConstMeta(debugName: "init_app", argNames: []);
+  TaskConstMeta get kMoproExampleAppHalo2ProofResultDefaultConstMeta =>
+      const TaskConstMeta(
+        debugName: "halo_2_proof_result_default",
+        argNames: [],
+      );
 
   @override
-  Future<ProofLib> testE2EProofLibDefault() {
+  Future<void> moproExampleAppInitApp() {
     return handler.executeNormal(
       NormalTask(
         callFfi: (port_) {
@@ -455,21 +499,102 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           );
         },
         codec: SseCodec(
-          decodeSuccessData: sse_decode_proof_lib,
+          decodeSuccessData: sse_decode_unit,
           decodeErrorData: null,
         ),
-        constMeta: kTestE2EProofLibDefaultConstMeta,
+        constMeta: kMoproExampleAppInitAppConstMeta,
         argValues: [],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kTestE2EProofLibDefaultConstMeta =>
+  TaskConstMeta get kMoproExampleAppInitAppConstMeta =>
+      const TaskConstMeta(debugName: "init_app", argNames: []);
+
+  @override
+  Future<String> moproExampleAppMoproHelloWorld() {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 11,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: null,
+        ),
+        constMeta: kMoproExampleAppMoproHelloWorldConstMeta,
+        argValues: [],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kMoproExampleAppMoproHelloWorldConstMeta =>
+      const TaskConstMeta(debugName: "mopro_hello_world", argNames: []);
+
+  @override
+  Future<String> moproExampleAppMoproWasmHelloWorld() {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 12,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: null,
+        ),
+        constMeta: kMoproExampleAppMoproWasmHelloWorldConstMeta,
+        argValues: [],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kMoproExampleAppMoproWasmHelloWorldConstMeta =>
+      const TaskConstMeta(debugName: "mopro_wasm_hello_world", argNames: []);
+
+  @override
+  Future<ProofLib> moproExampleAppProofLibDefault() {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 13,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_proof_lib,
+          decodeErrorData: null,
+        ),
+        constMeta: kMoproExampleAppProofLibDefaultConstMeta,
+        argValues: [],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kMoproExampleAppProofLibDefaultConstMeta =>
       const TaskConstMeta(debugName: "proof_lib_default", argNames: []);
 
   @override
-  Future<bool> testE2EVerifyCircomProof({
+  Future<bool> moproExampleAppVerifyCircomProof({
     required String zkeyPath,
     required CircomProofResult proofResult,
     required ProofLib proofLib,
@@ -484,28 +609,68 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 11,
+            funcId: 14,
             port: port_,
           );
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
+          decodeErrorData:
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError,
         ),
-        constMeta: kTestE2EVerifyCircomProofConstMeta,
+        constMeta: kMoproExampleAppVerifyCircomProofConstMeta,
         argValues: [zkeyPath, proofResult, proofLib],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kTestE2EVerifyCircomProofConstMeta => const TaskConstMeta(
-    debugName: "verify_circom_proof",
-    argNames: ["zkeyPath", "proofResult", "proofLib"],
-  );
+  TaskConstMeta get kMoproExampleAppVerifyCircomProofConstMeta =>
+      const TaskConstMeta(
+        debugName: "verify_circom_proof",
+        argNames: ["zkeyPath", "proofResult", "proofLib"],
+      );
 
   @override
-  Future<bool> testE2EVerifyHalo2Proof({
+  Future<bool> moproExampleAppVerifyGnarkProof({
+    required String r1CsPath,
+    required String vkPath,
+    required GnarkProofResult proofResult,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(r1CsPath, serializer);
+          sse_encode_String(vkPath, serializer);
+          sse_encode_box_autoadd_gnark_proof_result(proofResult, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 15,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_bool,
+          decodeErrorData:
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError,
+        ),
+        constMeta: kMoproExampleAppVerifyGnarkProofConstMeta,
+        argValues: [r1CsPath, vkPath, proofResult],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kMoproExampleAppVerifyGnarkProofConstMeta =>
+      const TaskConstMeta(
+        debugName: "verify_gnark_proof",
+        argNames: ["r1CsPath", "vkPath", "proofResult"],
+      );
+
+  @override
+  Future<bool> moproExampleAppVerifyHalo2Proof({
     required String srsPath,
     required String vkPath,
     required List<int> proof,
@@ -522,28 +687,30 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 12,
+            funcId: 16,
             port: port_,
           );
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_bool,
-          decodeErrorData: null,
+          decodeErrorData:
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError,
         ),
-        constMeta: kTestE2EVerifyHalo2ProofConstMeta,
+        constMeta: kMoproExampleAppVerifyHalo2ProofConstMeta,
         argValues: [srsPath, vkPath, proof, publicInput],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kTestE2EVerifyHalo2ProofConstMeta => const TaskConstMeta(
-    debugName: "verify_halo2_proof",
-    argNames: ["srsPath", "vkPath", "proof", "publicInput"],
-  );
+  TaskConstMeta get kMoproExampleAppVerifyHalo2ProofConstMeta =>
+      const TaskConstMeta(
+        debugName: "verify_halo2_proof",
+        argNames: ["srsPath", "vkPath", "proof", "publicInput"],
+      );
 
   @override
-  Future<bool> testE2EVerifyNoirProof({
+  Future<bool> moproExampleAppVerifyNoirProof({
     required String circuitPath,
     required List<int> proof,
     required bool onChain,
@@ -562,25 +729,44 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 13,
+            funcId: 17,
             port: port_,
           );
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_bool,
-          decodeErrorData: sse_decode_String,
+          decodeErrorData:
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError,
         ),
-        constMeta: kTestE2EVerifyNoirProofConstMeta,
+        constMeta: kMoproExampleAppVerifyNoirProofConstMeta,
         argValues: [circuitPath, proof, onChain, vk, lowMemoryMode],
         apiImpl: this,
       ),
     );
   }
 
-  TaskConstMeta get kTestE2EVerifyNoirProofConstMeta => const TaskConstMeta(
-    debugName: "verify_noir_proof",
-    argNames: ["circuitPath", "proof", "onChain", "vk", "lowMemoryMode"],
-  );
+  TaskConstMeta get kMoproExampleAppVerifyNoirProofConstMeta =>
+      const TaskConstMeta(
+        debugName: "verify_noir_proof",
+        argNames: ["circuitPath", "proof", "onChain", "vk", "lowMemoryMode"],
+      );
+
+  RustArcIncrementStrongCountFnType
+  get rust_arc_increment_strong_count_MoproError =>
+      wire.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError;
+
+  RustArcDecrementStrongCountFnType
+  get rust_arc_decrement_strong_count_MoproError =>
+      wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError;
+
+  @protected
+  MoproError
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return MoproErrorImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
 
   @protected
   Map<String, List<String>> dco_decode_Map_String_list_String_None(
@@ -592,6 +778,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         raw,
       ).map((e) => MapEntry(e.$1, e.$2)),
     );
+  }
+
+  @protected
+  MoproError
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return MoproErrorImpl.frbInternalDcoDecode(raw as List<dynamic>);
   }
 
   @protected
@@ -610,6 +805,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   CircomProofResult dco_decode_box_autoadd_circom_proof_result(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_circom_proof_result(raw);
+  }
+
+  @protected
+  GnarkProofResult dco_decode_box_autoadd_gnark_proof_result(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_gnark_proof_result(raw);
   }
 
   @protected
@@ -662,6 +863,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       x: dco_decode_list_String(arr[0]),
       y: dco_decode_list_String(arr[1]),
       z: dco_decode_list_String(arr[2]),
+    );
+  }
+
+  @protected
+  GnarkProofResult dco_decode_gnark_proof_result(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return GnarkProofResult(
+      proof: dco_decode_String(arr[0]),
+      publicInputs: dco_decode_String(arr[1]),
     );
   }
 
@@ -746,12 +959,42 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  BigInt dco_decode_usize(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dcoDecodeU64(raw);
+  }
+
+  @protected
+  MoproError
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return MoproErrorImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
   Map<String, List<String>> sse_decode_Map_String_list_String_None(
     SseDeserializer deserializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var inner = sse_decode_list_record_string_list_string(deserializer);
     return Map.fromEntries(inner.map((e) => MapEntry(e.$1, e.$2)));
+  }
+
+  @protected
+  MoproError
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return MoproErrorImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
   }
 
   @protected
@@ -773,6 +1016,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_circom_proof_result(deserializer));
+  }
+
+  @protected
+  GnarkProofResult sse_decode_box_autoadd_gnark_proof_result(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_gnark_proof_result(deserializer));
   }
 
   @protected
@@ -818,6 +1069,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_y = sse_decode_list_String(deserializer);
     var var_z = sse_decode_list_String(deserializer);
     return G2(x: var_x, y: var_y, z: var_z);
+  }
+
+  @protected
+  GnarkProofResult sse_decode_gnark_proof_result(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_proof = sse_decode_String(deserializer);
+    var var_publicInputs = sse_decode_String(deserializer);
+    return GnarkProofResult(proof: var_proof, publicInputs: var_publicInputs);
   }
 
   @protected
@@ -916,6 +1175,25 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  BigInt sse_decode_usize(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getBigUint64();
+  }
+
+  @protected
+  void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+    MoproError self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as MoproErrorImpl).frbInternalSseEncode(move: true),
+      serializer,
+    );
+  }
+
+  @protected
   void sse_encode_Map_String_list_String_None(
     Map<String, List<String>> self,
     SseSerializer serializer,
@@ -923,6 +1201,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_list_record_string_list_string(
       self.entries.map((e) => (e.key, e.value)).toList(),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+    MoproError self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as MoproErrorImpl).frbInternalSseEncode(move: null),
       serializer,
     );
   }
@@ -946,6 +1237,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_circom_proof_result(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_gnark_proof_result(
+    GnarkProofResult self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_gnark_proof_result(self, serializer);
   }
 
   @protected
@@ -982,6 +1282,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_list_String(self.x, serializer);
     sse_encode_list_String(self.y, serializer);
     sse_encode_list_String(self.z, serializer);
+  }
+
+  @protected
+  void sse_encode_gnark_proof_result(
+    GnarkProofResult self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.proof, serializer);
+    sse_encode_String(self.publicInputs, serializer);
   }
 
   @protected
@@ -1079,4 +1389,30 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   void sse_encode_unit(void self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
   }
+
+  @protected
+  void sse_encode_usize(BigInt self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putBigUint64(self);
+  }
+}
+
+@sealed
+class MoproErrorImpl extends RustOpaque implements MoproError {
+  // Not to be used by end users
+  MoproErrorImpl.frbInternalDcoDecode(List<dynamic> wire)
+    : super.frbInternalDcoDecode(wire, _kStaticData);
+
+  // Not to be used by end users
+  MoproErrorImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
+    : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+  static final _kStaticData = RustArcStaticData(
+    rustArcIncrementStrongCount:
+        RustLib.instance.api.rust_arc_increment_strong_count_MoproError,
+    rustArcDecrementStrongCount:
+        RustLib.instance.api.rust_arc_decrement_strong_count_MoproError,
+    rustArcDecrementStrongCountPtr:
+        RustLib.instance.api.rust_arc_decrement_strong_count_MoproErrorPtr,
+  );
 }

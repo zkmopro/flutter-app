@@ -6,13 +6,21 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-Future<void> initApp() => RustLib.instance.api.testE2EInitApp();
+Future<void> initApp() => RustLib.instance.api.moproExampleAppInitApp();
+
+/// You can also customize the bindings by #[uniffi::export]
+/// Reference: https://mozilla.github.io/uniffi-rs/latest/proc_macro/index.html
+Future<String> moproHelloWorld() =>
+    RustLib.instance.api.moproExampleAppMoproHelloWorld();
+
+Future<String> moproWasmHelloWorld() =>
+    RustLib.instance.api.moproExampleAppMoproWasmHelloWorld();
 
 Future<CircomProofResult> generateCircomProof({
   required String zkeyPath,
   required String circuitInputs,
   required ProofLib proofLib,
-}) => RustLib.instance.api.testE2EGenerateCircomProof(
+}) => RustLib.instance.api.moproExampleAppGenerateCircomProof(
   zkeyPath: zkeyPath,
   circuitInputs: circuitInputs,
   proofLib: proofLib,
@@ -22,7 +30,7 @@ Future<bool> verifyCircomProof({
   required String zkeyPath,
   required CircomProofResult proofResult,
   required ProofLib proofLib,
-}) => RustLib.instance.api.testE2EVerifyCircomProof(
+}) => RustLib.instance.api.moproExampleAppVerifyCircomProof(
   zkeyPath: zkeyPath,
   proofResult: proofResult,
   proofLib: proofLib,
@@ -32,7 +40,7 @@ Future<Halo2ProofResult> generateHalo2Proof({
   required String srsPath,
   required String pkPath,
   required Map<String, List<String>> circuitInputs,
-}) => RustLib.instance.api.testE2EGenerateHalo2Proof(
+}) => RustLib.instance.api.moproExampleAppGenerateHalo2Proof(
   srsPath: srsPath,
   pkPath: pkPath,
   circuitInputs: circuitInputs,
@@ -43,20 +51,13 @@ Future<bool> verifyHalo2Proof({
   required String vkPath,
   required List<int> proof,
   required List<int> publicInput,
-}) => RustLib.instance.api.testE2EVerifyHalo2Proof(
+}) => RustLib.instance.api.moproExampleAppVerifyHalo2Proof(
   srsPath: srsPath,
   vkPath: vkPath,
   proof: proof,
   publicInput: publicInput,
 );
 
-/// Generates a Noir proof with automatic hash function selection
-///
-/// This is the main proof generation function that automatically chooses
-/// the appropriate hash function based on the intended use case:
-///
-/// - `on_chain = true`: Uses Keccak hash for Solidity verifier compatibility
-/// - `on_chain = false`: Uses Poseidon hash for better performance
 Future<Uint8List> generateNoirProof({
   required String circuitPath,
   String? srsPath,
@@ -64,7 +65,7 @@ Future<Uint8List> generateNoirProof({
   required bool onChain,
   required List<int> vk,
   required bool lowMemoryMode,
-}) => RustLib.instance.api.testE2EGenerateNoirProof(
+}) => RustLib.instance.api.moproExampleAppGenerateNoirProof(
   circuitPath: circuitPath,
   srsPath: srsPath,
   inputs: inputs,
@@ -73,20 +74,13 @@ Future<Uint8List> generateNoirProof({
   lowMemoryMode: lowMemoryMode,
 );
 
-/// Verifies a Noir proof with automatic hash function selection
-///
-/// This function automatically uses the correct verification method based
-/// on how the proof was generated:
-///
-/// - `on_chain = true`: Verifies Keccak-based proof (Solidity compatible)
-/// - `on_chain = false`: Verifies Poseidon-based proof (performance optimized)
 Future<bool> verifyNoirProof({
   required String circuitPath,
   required List<int> proof,
   required bool onChain,
   required List<int> vk,
   required bool lowMemoryMode,
-}) => RustLib.instance.api.testE2EVerifyNoirProof(
+}) => RustLib.instance.api.moproExampleAppVerifyNoirProof(
   circuitPath: circuitPath,
   proof: proof,
   onChain: onChain,
@@ -94,27 +88,40 @@ Future<bool> verifyNoirProof({
   lowMemoryMode: lowMemoryMode,
 );
 
-/// Generates a verification key with automatic hash function selection
-///
-/// This function automatically chooses the appropriate hash function based
-/// on the intended use case:
-///
-/// - `on_chain = true`: Uses Keccak hash for Solidity verifier compatibility
-/// - `on_chain = false`: Uses Poseidon hash for better performance
 Future<Uint8List> getNoirVerificationKey({
   required String circuitPath,
   String? srsPath,
   required bool onChain,
   required bool lowMemoryMode,
-}) => RustLib.instance.api.testE2EGetNoirVerificationKey(
+}) => RustLib.instance.api.moproExampleAppGetNoirVerificationKey(
   circuitPath: circuitPath,
   srsPath: srsPath,
   onChain: onChain,
   lowMemoryMode: lowMemoryMode,
 );
 
-Future<String> greet({required String name}) =>
-    RustLib.instance.api.testE2EGreet(name: name);
+Future<GnarkProofResult> generateGnarkProof({
+  required String r1CsPath,
+  required String pkPath,
+  required String witnessJson,
+}) => RustLib.instance.api.moproExampleAppGenerateGnarkProof(
+  r1CsPath: r1CsPath,
+  pkPath: pkPath,
+  witnessJson: witnessJson,
+);
+
+Future<bool> verifyGnarkProof({
+  required String r1CsPath,
+  required String vkPath,
+  required GnarkProofResult proofResult,
+}) => RustLib.instance.api.moproExampleAppVerifyGnarkProof(
+  r1CsPath: r1CsPath,
+  vkPath: vkPath,
+  proofResult: proofResult,
+);
+
+// Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MoproError>>
+abstract class MoproError implements RustOpaqueInterface {}
 
 class CircomProof {
   final G1 a;
@@ -132,7 +139,7 @@ class CircomProof {
   });
 
   static Future<CircomProof> default_() =>
-      RustLib.instance.api.testE2ECircomProofDefault();
+      RustLib.instance.api.moproExampleAppCircomProofDefault();
 
   @override
   int get hashCode =>
@@ -175,7 +182,8 @@ class G1 {
 
   const G1({required this.x, required this.y, required this.z});
 
-  static Future<G1> default_() => RustLib.instance.api.testE2EG1Default();
+  static Future<G1> default_() =>
+      RustLib.instance.api.moproExampleAppG1Default();
 
   @override
   int get hashCode => x.hashCode ^ y.hashCode ^ z.hashCode;
@@ -197,7 +205,8 @@ class G2 {
 
   const G2({required this.x, required this.y, required this.z});
 
-  static Future<G2> default_() => RustLib.instance.api.testE2EG2Default();
+  static Future<G2> default_() =>
+      RustLib.instance.api.moproExampleAppG2Default();
 
   @override
   int get hashCode => x.hashCode ^ y.hashCode ^ z.hashCode;
@@ -212,11 +221,32 @@ class G2 {
           z == other.z;
 }
 
+class GnarkProofResult {
+  final String proof;
+  final String publicInputs;
+
+  const GnarkProofResult({required this.proof, required this.publicInputs});
+
+  @override
+  int get hashCode => proof.hashCode ^ publicInputs.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is GnarkProofResult &&
+          runtimeType == other.runtimeType &&
+          proof == other.proof &&
+          publicInputs == other.publicInputs;
+}
+
 class Halo2ProofResult {
   final Uint8List proof;
   final Uint8List inputs;
 
   const Halo2ProofResult({required this.proof, required this.inputs});
+
+  static Future<Halo2ProofResult> default_() =>
+      RustLib.instance.api.moproExampleAppHalo2ProofResultDefault();
 
   @override
   int get hashCode => proof.hashCode ^ inputs.hashCode;
@@ -235,5 +265,5 @@ enum ProofLib {
   rapidsnark;
 
   static Future<ProofLib> default_() =>
-      RustLib.instance.api.testE2EProofLibDefault();
+      RustLib.instance.api.moproExampleAppProofLibDefault();
 }

@@ -10,7 +10,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated_web.dart';
-import 'third_party/test_e2e.dart';
+import 'third_party/mopro_example_app.dart';
 
 abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   RustLibApiImplPlatform({
@@ -20,8 +20,23 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     required super.portManager,
   });
 
+  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_MoproErrorPtr =>
+      wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError;
+
+  @protected
+  MoproError
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+    dynamic raw,
+  );
+
   @protected
   Map<String, List<String>> dco_decode_Map_String_list_String_None(dynamic raw);
+
+  @protected
+  MoproError
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+    dynamic raw,
+  );
 
   @protected
   String dco_decode_String(dynamic raw);
@@ -31,6 +46,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   CircomProofResult dco_decode_box_autoadd_circom_proof_result(dynamic raw);
+
+  @protected
+  GnarkProofResult dco_decode_box_autoadd_gnark_proof_result(dynamic raw);
 
   @protected
   CircomProof dco_decode_circom_proof(dynamic raw);
@@ -43,6 +61,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   G2 dco_decode_g_2(dynamic raw);
+
+  @protected
+  GnarkProofResult dco_decode_gnark_proof_result(dynamic raw);
 
   @protected
   Halo2ProofResult dco_decode_halo_2_proof_result(dynamic raw);
@@ -80,7 +101,22 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void dco_decode_unit(dynamic raw);
 
   @protected
+  BigInt dco_decode_usize(dynamic raw);
+
+  @protected
+  MoproError
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   Map<String, List<String>> sse_decode_Map_String_list_String_None(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  MoproError
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
     SseDeserializer deserializer,
   );
 
@@ -92,6 +128,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   CircomProofResult sse_decode_box_autoadd_circom_proof_result(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  GnarkProofResult sse_decode_box_autoadd_gnark_proof_result(
     SseDeserializer deserializer,
   );
 
@@ -108,6 +149,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   G2 sse_decode_g_2(SseDeserializer deserializer);
+
+  @protected
+  GnarkProofResult sse_decode_gnark_proof_result(SseDeserializer deserializer);
 
   @protected
   Halo2ProofResult sse_decode_halo_2_proof_result(SseDeserializer deserializer);
@@ -147,8 +191,25 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_decode_unit(SseDeserializer deserializer);
 
   @protected
+  BigInt sse_decode_usize(SseDeserializer deserializer);
+
+  @protected
+  void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+    MoproError self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_Map_String_list_String_None(
     Map<String, List<String>> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+    MoproError self,
     SseSerializer serializer,
   );
 
@@ -161,6 +222,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_box_autoadd_circom_proof_result(
     CircomProofResult self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_gnark_proof_result(
+    GnarkProofResult self,
     SseSerializer serializer,
   );
 
@@ -178,6 +245,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_g_2(G2 self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_gnark_proof_result(
+    GnarkProofResult self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_halo_2_proof_result(
@@ -223,12 +296,31 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_unit(void self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_usize(BigInt self, SseSerializer serializer);
 }
 
 // Section: wire_class
 
 class RustLibWire implements BaseWire {
   RustLibWire.fromExternalLibrary(ExternalLibrary lib);
+
+  void
+  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+    int ptr,
+  ) => wasmModule
+      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+        ptr,
+      );
+
+  void
+  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+    int ptr,
+  ) => wasmModule
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+        ptr,
+      );
 }
 
 @JS('wasm_bindgen')
@@ -236,4 +328,14 @@ external RustLibWasmModule get wasmModule;
 
 @JS()
 @anonymous
-extension type RustLibWasmModule._(JSObject _) implements JSObject {}
+extension type RustLibWasmModule._(JSObject _) implements JSObject {
+  external void
+  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+    int ptr,
+  );
+
+  external void
+  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+    int ptr,
+  );
+}

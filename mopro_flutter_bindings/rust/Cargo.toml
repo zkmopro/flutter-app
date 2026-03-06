@@ -1,8 +1,10 @@
 [dependencies]
 flutter_rust_bridge = "=2.11.1"
 
-[dependencies.test-e2e]
-path = "/Users/zhengyawen/Documents/GitHub/mopro-refactor/test-e2e"
+[dependencies.mopro-example-app]
+default-features = false
+features = ["flutter"]
+path = "/Users/zhengyawen/Documents/GitHub/mopro-example-app"
 version = "0.1.0"
 
 [lib]

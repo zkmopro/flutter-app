@@ -28,6 +28,7 @@
 use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
 use flutter_rust_bridge::for_generated::{transform_result_dco, Lifetimeable, Lockable};
 use flutter_rust_bridge::{Handler, IntoIntoDart};
+use mopro_example_app::*;
 
 // Section: boilerplate
 
@@ -37,7 +38,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.11.1";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 712606805;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 969479230;
 
 // Section: executor
 
@@ -45,7 +46,7 @@ flutter_rust_bridge::frb_generated_default_handler!();
 
 // Section: wire_funcs
 
-fn wire__test_e2e__circom_proof_default_impl(
+fn wire__mopro_example_app__circom_proof_default_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -70,14 +71,14 @@ fn wire__test_e2e__circom_proof_default_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(test_e2e::CircomProof::default())?;
+                    let output_ok = Result::<_, ()>::Ok(mopro_example_app::CircomProof::default())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__test_e2e__g_1_default_impl(
+fn wire__mopro_example_app__g_1_default_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -102,14 +103,14 @@ fn wire__test_e2e__g_1_default_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(test_e2e::G1::default())?;
+                    let output_ok = Result::<_, ()>::Ok(mopro_example_app::G1::default())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__test_e2e__g_2_default_impl(
+fn wire__mopro_example_app__g_2_default_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -134,14 +135,14 @@ fn wire__test_e2e__g_2_default_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(test_e2e::G2::default())?;
+                    let output_ok = Result::<_, ()>::Ok(mopro_example_app::G2::default())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__test_e2e__generate_circom_proof_impl(
+fn wire__mopro_example_app__generate_circom_proof_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -165,22 +166,61 @@ fn wire__test_e2e__generate_circom_proof_impl(
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_zkey_path = <String>::sse_decode(&mut deserializer);
             let api_circuit_inputs = <String>::sse_decode(&mut deserializer);
-            let api_proof_lib = <test_e2e::ProofLib>::sse_decode(&mut deserializer);
+            let api_proof_lib = <mopro_example_app::ProofLib>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
-                transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(test_e2e::generate_circom_proof(
+                transform_result_sse::<_, MoproError>((move || {
+                    let output_ok = mopro_example_app::generate_circom_proof(
                         api_zkey_path,
                         api_circuit_inputs,
                         api_proof_lib,
-                    ))?;
+                    )?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__test_e2e__generate_halo2_proof_impl(
+fn wire__mopro_example_app__generate_gnark_proof_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "generate_gnark_proof",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api__r1cs_path = <String>::sse_decode(&mut deserializer);
+            let api__pk_path = <String>::sse_decode(&mut deserializer);
+            let api__witness_json = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, MoproError>((move || {
+                    let output_ok = mopro_example_app::generate_gnark_proof(
+                        api__r1cs_path,
+                        api__pk_path,
+                        api__witness_json,
+                    )?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__mopro_example_app__generate_halo2_proof_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -202,25 +242,25 @@ fn wire__test_e2e__generate_halo2_proof_impl(
             };
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_srs_path = <String>::sse_decode(&mut deserializer);
-            let api_pk_path = <String>::sse_decode(&mut deserializer);
-            let api_circuit_inputs =
+            let api__srs_path = <String>::sse_decode(&mut deserializer);
+            let api__pk_path = <String>::sse_decode(&mut deserializer);
+            let api__circuit_inputs =
                 <std::collections::HashMap<String, Vec<String>>>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
-                transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(test_e2e::generate_halo2_proof(
-                        api_srs_path,
-                        api_pk_path,
-                        api_circuit_inputs,
-                    ))?;
+                transform_result_sse::<_, MoproError>((move || {
+                    let output_ok = mopro_example_app::generate_halo2_proof(
+                        api__srs_path,
+                        api__pk_path,
+                        api__circuit_inputs,
+                    )?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__test_e2e__generate_noir_proof_impl(
+fn wire__mopro_example_app__generate_noir_proof_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -242,22 +282,22 @@ fn wire__test_e2e__generate_noir_proof_impl(
             };
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_circuit_path = <String>::sse_decode(&mut deserializer);
-            let api_srs_path = <Option<String>>::sse_decode(&mut deserializer);
-            let api_inputs = <Vec<String>>::sse_decode(&mut deserializer);
-            let api_on_chain = <bool>::sse_decode(&mut deserializer);
-            let api_vk = <Vec<u8>>::sse_decode(&mut deserializer);
-            let api_low_memory_mode = <bool>::sse_decode(&mut deserializer);
+            let api__circuit_path = <String>::sse_decode(&mut deserializer);
+            let api__srs_path = <Option<String>>::sse_decode(&mut deserializer);
+            let api__inputs = <Vec<String>>::sse_decode(&mut deserializer);
+            let api__on_chain = <bool>::sse_decode(&mut deserializer);
+            let api__vk = <Vec<u8>>::sse_decode(&mut deserializer);
+            let api__low_memory_mode = <bool>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
-                transform_result_sse::<_, String>((move || {
-                    let output_ok = test_e2e::generate_noir_proof(
-                        api_circuit_path,
-                        api_srs_path,
-                        api_inputs,
-                        api_on_chain,
-                        api_vk,
-                        api_low_memory_mode,
+                transform_result_sse::<_, MoproError>((move || {
+                    let output_ok = mopro_example_app::generate_noir_proof(
+                        api__circuit_path,
+                        api__srs_path,
+                        api__inputs,
+                        api__on_chain,
+                        api__vk,
+                        api__low_memory_mode,
                     )?;
                     Ok(output_ok)
                 })())
@@ -265,7 +305,7 @@ fn wire__test_e2e__generate_noir_proof_impl(
         },
     )
 }
-fn wire__test_e2e__get_noir_verification_key_impl(
+fn wire__mopro_example_app__get_noir_verification_key_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -287,18 +327,18 @@ fn wire__test_e2e__get_noir_verification_key_impl(
             };
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_circuit_path = <String>::sse_decode(&mut deserializer);
-            let api_srs_path = <Option<String>>::sse_decode(&mut deserializer);
-            let api_on_chain = <bool>::sse_decode(&mut deserializer);
-            let api_low_memory_mode = <bool>::sse_decode(&mut deserializer);
+            let api__circuit_path = <String>::sse_decode(&mut deserializer);
+            let api__srs_path = <Option<String>>::sse_decode(&mut deserializer);
+            let api__on_chain = <bool>::sse_decode(&mut deserializer);
+            let api__low_memory_mode = <bool>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
-                transform_result_sse::<_, String>((move || {
-                    let output_ok = test_e2e::get_noir_verification_key(
-                        api_circuit_path,
-                        api_srs_path,
-                        api_on_chain,
-                        api_low_memory_mode,
+                transform_result_sse::<_, MoproError>((move || {
+                    let output_ok = mopro_example_app::get_noir_verification_key(
+                        api__circuit_path,
+                        api__srs_path,
+                        api__on_chain,
+                        api__low_memory_mode,
                     )?;
                     Ok(output_ok)
                 })())
@@ -306,7 +346,7 @@ fn wire__test_e2e__get_noir_verification_key_impl(
         },
     )
 }
-fn wire__test_e2e__greet_impl(
+fn wire__mopro_example_app__halo_2_proof_result_default_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -314,7 +354,7 @@ fn wire__test_e2e__greet_impl(
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "greet",
+            debug_name: "halo_2_proof_result_default",
             port: Some(port_),
             mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
         },
@@ -328,18 +368,18 @@ fn wire__test_e2e__greet_impl(
             };
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_name = <String>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(test_e2e::greet(api_name))?;
+                    let output_ok =
+                        Result::<_, ()>::Ok(mopro_example_app::Halo2ProofResult::default())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__test_e2e__init_app_impl(
+fn wire__mopro_example_app__init_app_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -365,7 +405,7 @@ fn wire__test_e2e__init_app_impl(
             move |context| {
                 transform_result_sse::<_, ()>((move || {
                     let output_ok = Result::<_, ()>::Ok({
-                        test_e2e::init_app();
+                        mopro_example_app::init_app();
                     })?;
                     Ok(output_ok)
                 })())
@@ -373,7 +413,72 @@ fn wire__test_e2e__init_app_impl(
         },
     )
 }
-fn wire__test_e2e__proof_lib_default_impl(
+fn wire__mopro_example_app__mopro_hello_world_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "mopro_hello_world",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let output_ok = Result::<_, ()>::Ok(mopro_example_app::mopro_hello_world())?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__mopro_example_app__mopro_wasm_hello_world_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "mopro_wasm_hello_world",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, ()>((move || {
+                    let output_ok =
+                        Result::<_, ()>::Ok(mopro_example_app::mopro_wasm_hello_world())?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__mopro_example_app__proof_lib_default_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -398,14 +503,14 @@ fn wire__test_e2e__proof_lib_default_impl(
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(test_e2e::ProofLib::default())?;
+                    let output_ok = Result::<_, ()>::Ok(mopro_example_app::ProofLib::default())?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__test_e2e__verify_circom_proof_impl(
+fn wire__mopro_example_app__verify_circom_proof_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -428,23 +533,64 @@ fn wire__test_e2e__verify_circom_proof_impl(
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
             let api_zkey_path = <String>::sse_decode(&mut deserializer);
-            let api_proof_result = <test_e2e::CircomProofResult>::sse_decode(&mut deserializer);
-            let api_proof_lib = <test_e2e::ProofLib>::sse_decode(&mut deserializer);
+            let api_proof_result =
+                <mopro_example_app::CircomProofResult>::sse_decode(&mut deserializer);
+            let api_proof_lib = <mopro_example_app::ProofLib>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
-                transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(test_e2e::verify_circom_proof(
+                transform_result_sse::<_, MoproError>((move || {
+                    let output_ok = mopro_example_app::verify_circom_proof(
                         api_zkey_path,
                         api_proof_result,
                         api_proof_lib,
-                    ))?;
+                    )?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__test_e2e__verify_halo2_proof_impl(
+fn wire__mopro_example_app__verify_gnark_proof_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "verify_gnark_proof",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api__r1cs_path = <String>::sse_decode(&mut deserializer);
+            let api__vk_path = <String>::sse_decode(&mut deserializer);
+            let api__proof_result =
+                <mopro_example_app::GnarkProofResult>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, MoproError>((move || {
+                    let output_ok = mopro_example_app::verify_gnark_proof(
+                        api__r1cs_path,
+                        api__vk_path,
+                        api__proof_result,
+                    )?;
+                    Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__mopro_example_app__verify_halo2_proof_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -466,26 +612,26 @@ fn wire__test_e2e__verify_halo2_proof_impl(
             };
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_srs_path = <String>::sse_decode(&mut deserializer);
-            let api_vk_path = <String>::sse_decode(&mut deserializer);
-            let api_proof = <Vec<u8>>::sse_decode(&mut deserializer);
-            let api_public_input = <Vec<u8>>::sse_decode(&mut deserializer);
+            let api__srs_path = <String>::sse_decode(&mut deserializer);
+            let api__vk_path = <String>::sse_decode(&mut deserializer);
+            let api__proof = <Vec<u8>>::sse_decode(&mut deserializer);
+            let api__public_input = <Vec<u8>>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
-                transform_result_sse::<_, ()>((move || {
-                    let output_ok = Result::<_, ()>::Ok(test_e2e::verify_halo2_proof(
-                        api_srs_path,
-                        api_vk_path,
-                        api_proof,
-                        api_public_input,
-                    ))?;
+                transform_result_sse::<_, MoproError>((move || {
+                    let output_ok = mopro_example_app::verify_halo2_proof(
+                        api__srs_path,
+                        api__vk_path,
+                        api__proof,
+                        api__public_input,
+                    )?;
                     Ok(output_ok)
                 })())
             }
         },
     )
 }
-fn wire__test_e2e__verify_noir_proof_impl(
+fn wire__mopro_example_app__verify_noir_proof_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -507,20 +653,20 @@ fn wire__test_e2e__verify_noir_proof_impl(
             };
             let mut deserializer =
                 flutter_rust_bridge::for_generated::SseDeserializer::new(message);
-            let api_circuit_path = <String>::sse_decode(&mut deserializer);
-            let api_proof = <Vec<u8>>::sse_decode(&mut deserializer);
-            let api_on_chain = <bool>::sse_decode(&mut deserializer);
-            let api_vk = <Vec<u8>>::sse_decode(&mut deserializer);
-            let api_low_memory_mode = <bool>::sse_decode(&mut deserializer);
+            let api__circuit_path = <String>::sse_decode(&mut deserializer);
+            let api__proof = <Vec<u8>>::sse_decode(&mut deserializer);
+            let api__on_chain = <bool>::sse_decode(&mut deserializer);
+            let api__vk = <Vec<u8>>::sse_decode(&mut deserializer);
+            let api__low_memory_mode = <bool>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
-                transform_result_sse::<_, String>((move || {
-                    let output_ok = test_e2e::verify_noir_proof(
-                        api_circuit_path,
-                        api_proof,
-                        api_on_chain,
-                        api_vk,
-                        api_low_memory_mode,
+                transform_result_sse::<_, MoproError>((move || {
+                    let output_ok = mopro_example_app::verify_noir_proof(
+                        api__circuit_path,
+                        api__proof,
+                        api__on_chain,
+                        api__vk,
+                        api__low_memory_mode,
                     )?;
                     Ok(output_ok)
                 })())
@@ -534,44 +680,75 @@ fn wire__test_e2e__verify_noir_proof_impl(
 #[allow(clippy::unnecessary_literal_unwrap)]
 const _: fn() = || {
     {
-        let CircomProof = None::<test_e2e::CircomProof>.unwrap();
-        let _: test_e2e::G1 = CircomProof.a;
-        let _: test_e2e::G2 = CircomProof.b;
-        let _: test_e2e::G1 = CircomProof.c;
+        let CircomProof = None::<mopro_example_app::CircomProof>.unwrap();
+        let _: mopro_example_app::G1 = CircomProof.a;
+        let _: mopro_example_app::G2 = CircomProof.b;
+        let _: mopro_example_app::G1 = CircomProof.c;
         let _: String = CircomProof.protocol;
         let _: String = CircomProof.curve;
     }
     {
-        let CircomProofResult = None::<test_e2e::CircomProofResult>.unwrap();
-        let _: test_e2e::CircomProof = CircomProofResult.proof;
+        let CircomProofResult = None::<mopro_example_app::CircomProofResult>.unwrap();
+        let _: mopro_example_app::CircomProof = CircomProofResult.proof;
         let _: Vec<String> = CircomProofResult.inputs;
     }
     {
-        let G1 = None::<test_e2e::G1>.unwrap();
+        let G1 = None::<mopro_example_app::G1>.unwrap();
         let _: String = G1.x;
         let _: String = G1.y;
         let _: String = G1.z;
     }
     {
-        let G2 = None::<test_e2e::G2>.unwrap();
+        let G2 = None::<mopro_example_app::G2>.unwrap();
         let _: Vec<String> = G2.x;
         let _: Vec<String> = G2.y;
         let _: Vec<String> = G2.z;
     }
     {
-        let Halo2ProofResult = None::<test_e2e::Halo2ProofResult>.unwrap();
+        let GnarkProofResult = None::<mopro_example_app::GnarkProofResult>.unwrap();
+        let _: String = GnarkProofResult.proof;
+        let _: String = GnarkProofResult.public_inputs;
+    }
+    {
+        let Halo2ProofResult = None::<mopro_example_app::Halo2ProofResult>.unwrap();
         let _: Vec<u8> = Halo2ProofResult.proof;
         let _: Vec<u8> = Halo2ProofResult.inputs;
     }
 };
 
+// Section: related_funcs
+
+flutter_rust_bridge::frb_generated_moi_arc_impl_value!(
+    flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MoproError>
+);
+
 // Section: dart2rust
+
+impl SseDecode for MoproError {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <RustOpaqueMoi<
+            flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MoproError>,
+        >>::sse_decode(deserializer);
+        return flutter_rust_bridge::for_generated::rust_auto_opaque_decode_owned(inner);
+    }
+}
 
 impl SseDecode for std::collections::HashMap<String, Vec<String>> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <Vec<(String, Vec<String>)>>::sse_decode(deserializer);
         return inner.into_iter().collect();
+    }
+}
+
+impl SseDecode
+    for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MoproError>>
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <usize>::sse_decode(deserializer);
+        return decode_rust_opaque_moi(inner);
     }
 }
 
@@ -590,15 +767,15 @@ impl SseDecode for bool {
     }
 }
 
-impl SseDecode for test_e2e::CircomProof {
+impl SseDecode for mopro_example_app::CircomProof {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_a = <test_e2e::G1>::sse_decode(deserializer);
-        let mut var_b = <test_e2e::G2>::sse_decode(deserializer);
-        let mut var_c = <test_e2e::G1>::sse_decode(deserializer);
+        let mut var_a = <mopro_example_app::G1>::sse_decode(deserializer);
+        let mut var_b = <mopro_example_app::G2>::sse_decode(deserializer);
+        let mut var_c = <mopro_example_app::G1>::sse_decode(deserializer);
         let mut var_protocol = <String>::sse_decode(deserializer);
         let mut var_curve = <String>::sse_decode(deserializer);
-        return test_e2e::CircomProof {
+        return mopro_example_app::CircomProof {
             a: var_a,
             b: var_b,
             c: var_c,
@@ -608,25 +785,25 @@ impl SseDecode for test_e2e::CircomProof {
     }
 }
 
-impl SseDecode for test_e2e::CircomProofResult {
+impl SseDecode for mopro_example_app::CircomProofResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_proof = <test_e2e::CircomProof>::sse_decode(deserializer);
+        let mut var_proof = <mopro_example_app::CircomProof>::sse_decode(deserializer);
         let mut var_inputs = <Vec<String>>::sse_decode(deserializer);
-        return test_e2e::CircomProofResult {
+        return mopro_example_app::CircomProofResult {
             proof: var_proof,
             inputs: var_inputs,
         };
     }
 }
 
-impl SseDecode for test_e2e::G1 {
+impl SseDecode for mopro_example_app::G1 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_x = <String>::sse_decode(deserializer);
         let mut var_y = <String>::sse_decode(deserializer);
         let mut var_z = <String>::sse_decode(deserializer);
-        return test_e2e::G1 {
+        return mopro_example_app::G1 {
             x: var_x,
             y: var_y,
             z: var_z,
@@ -634,13 +811,13 @@ impl SseDecode for test_e2e::G1 {
     }
 }
 
-impl SseDecode for test_e2e::G2 {
+impl SseDecode for mopro_example_app::G2 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_x = <Vec<String>>::sse_decode(deserializer);
         let mut var_y = <Vec<String>>::sse_decode(deserializer);
         let mut var_z = <Vec<String>>::sse_decode(deserializer);
-        return test_e2e::G2 {
+        return mopro_example_app::G2 {
             x: var_x,
             y: var_y,
             z: var_z,
@@ -648,12 +825,24 @@ impl SseDecode for test_e2e::G2 {
     }
 }
 
-impl SseDecode for test_e2e::Halo2ProofResult {
+impl SseDecode for mopro_example_app::GnarkProofResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_proof = <String>::sse_decode(deserializer);
+        let mut var_publicInputs = <String>::sse_decode(deserializer);
+        return mopro_example_app::GnarkProofResult {
+            proof: var_proof,
+            public_inputs: var_publicInputs,
+        };
+    }
+}
+
+impl SseDecode for mopro_example_app::Halo2ProofResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut var_proof = <Vec<u8>>::sse_decode(deserializer);
         let mut var_inputs = <Vec<u8>>::sse_decode(deserializer);
-        return test_e2e::Halo2ProofResult {
+        return mopro_example_app::Halo2ProofResult {
             proof: var_proof,
             inputs: var_inputs,
         };
@@ -714,13 +903,13 @@ impl SseDecode for Option<String> {
     }
 }
 
-impl SseDecode for test_e2e::ProofLib {
+impl SseDecode for mopro_example_app::ProofLib {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         let mut inner = <i32>::sse_decode(deserializer);
         return match inner {
-            0 => test_e2e::ProofLib::Arkworks,
-            1 => test_e2e::ProofLib::Rapidsnark,
+            0 => mopro_example_app::ProofLib::Arkworks,
+            1 => mopro_example_app::ProofLib::Rapidsnark,
             _ => unreachable!("Invalid variant for ProofLib: {}", inner),
         };
     }
@@ -747,6 +936,13 @@ impl SseDecode for () {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {}
 }
 
+impl SseDecode for usize {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        deserializer.cursor.read_u64::<NativeEndian>().unwrap() as _
+    }
+}
+
 fn pde_ffi_dispatcher_primary_impl(
     func_id: i32,
     port: flutter_rust_bridge::for_generated::MessagePort,
@@ -756,19 +952,35 @@ fn pde_ffi_dispatcher_primary_impl(
 ) {
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
-        1 => wire__test_e2e__circom_proof_default_impl(port, ptr, rust_vec_len, data_len),
-        2 => wire__test_e2e__g_1_default_impl(port, ptr, rust_vec_len, data_len),
-        3 => wire__test_e2e__g_2_default_impl(port, ptr, rust_vec_len, data_len),
-        4 => wire__test_e2e__generate_circom_proof_impl(port, ptr, rust_vec_len, data_len),
-        5 => wire__test_e2e__generate_halo2_proof_impl(port, ptr, rust_vec_len, data_len),
-        6 => wire__test_e2e__generate_noir_proof_impl(port, ptr, rust_vec_len, data_len),
-        7 => wire__test_e2e__get_noir_verification_key_impl(port, ptr, rust_vec_len, data_len),
-        8 => wire__test_e2e__greet_impl(port, ptr, rust_vec_len, data_len),
-        9 => wire__test_e2e__init_app_impl(port, ptr, rust_vec_len, data_len),
-        10 => wire__test_e2e__proof_lib_default_impl(port, ptr, rust_vec_len, data_len),
-        11 => wire__test_e2e__verify_circom_proof_impl(port, ptr, rust_vec_len, data_len),
-        12 => wire__test_e2e__verify_halo2_proof_impl(port, ptr, rust_vec_len, data_len),
-        13 => wire__test_e2e__verify_noir_proof_impl(port, ptr, rust_vec_len, data_len),
+        1 => wire__mopro_example_app__circom_proof_default_impl(port, ptr, rust_vec_len, data_len),
+        2 => wire__mopro_example_app__g_1_default_impl(port, ptr, rust_vec_len, data_len),
+        3 => wire__mopro_example_app__g_2_default_impl(port, ptr, rust_vec_len, data_len),
+        4 => wire__mopro_example_app__generate_circom_proof_impl(port, ptr, rust_vec_len, data_len),
+        5 => wire__mopro_example_app__generate_gnark_proof_impl(port, ptr, rust_vec_len, data_len),
+        6 => wire__mopro_example_app__generate_halo2_proof_impl(port, ptr, rust_vec_len, data_len),
+        7 => wire__mopro_example_app__generate_noir_proof_impl(port, ptr, rust_vec_len, data_len),
+        8 => wire__mopro_example_app__get_noir_verification_key_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        9 => wire__mopro_example_app__halo_2_proof_result_default_impl(
+            port,
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        10 => wire__mopro_example_app__init_app_impl(port, ptr, rust_vec_len, data_len),
+        11 => wire__mopro_example_app__mopro_hello_world_impl(port, ptr, rust_vec_len, data_len),
+        12 => {
+            wire__mopro_example_app__mopro_wasm_hello_world_impl(port, ptr, rust_vec_len, data_len)
+        }
+        13 => wire__mopro_example_app__proof_lib_default_impl(port, ptr, rust_vec_len, data_len),
+        14 => wire__mopro_example_app__verify_circom_proof_impl(port, ptr, rust_vec_len, data_len),
+        15 => wire__mopro_example_app__verify_gnark_proof_impl(port, ptr, rust_vec_len, data_len),
+        16 => wire__mopro_example_app__verify_halo2_proof_impl(port, ptr, rust_vec_len, data_len),
+        17 => wire__mopro_example_app__verify_noir_proof_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -788,7 +1000,22 @@ fn pde_ffi_dispatcher_sync_impl(
 // Section: rust2dart
 
 // Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for FrbWrapper<test_e2e::CircomProof> {
+impl flutter_rust_bridge::IntoDart for FrbWrapper<MoproError> {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self.0)
+            .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<MoproError> {}
+
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<MoproError>> for MoproError {
+    fn into_into_dart(self) -> FrbWrapper<MoproError> {
+        self.into()
+    }
+}
+
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for FrbWrapper<mopro_example_app::CircomProof> {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.0.a.into_into_dart().into_dart(),
@@ -801,18 +1028,18 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<test_e2e::CircomProof> {
     }
 }
 impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for FrbWrapper<test_e2e::CircomProof>
+    for FrbWrapper<mopro_example_app::CircomProof>
 {
 }
-impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<test_e2e::CircomProof>>
-    for test_e2e::CircomProof
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<mopro_example_app::CircomProof>>
+    for mopro_example_app::CircomProof
 {
-    fn into_into_dart(self) -> FrbWrapper<test_e2e::CircomProof> {
+    fn into_into_dart(self) -> FrbWrapper<mopro_example_app::CircomProof> {
         self.into()
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for FrbWrapper<test_e2e::CircomProofResult> {
+impl flutter_rust_bridge::IntoDart for FrbWrapper<mopro_example_app::CircomProofResult> {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.0.proof.into_into_dart().into_dart(),
@@ -822,18 +1049,18 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<test_e2e::CircomProofResult> {
     }
 }
 impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for FrbWrapper<test_e2e::CircomProofResult>
+    for FrbWrapper<mopro_example_app::CircomProofResult>
 {
 }
-impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<test_e2e::CircomProofResult>>
-    for test_e2e::CircomProofResult
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<mopro_example_app::CircomProofResult>>
+    for mopro_example_app::CircomProofResult
 {
-    fn into_into_dart(self) -> FrbWrapper<test_e2e::CircomProofResult> {
+    fn into_into_dart(self) -> FrbWrapper<mopro_example_app::CircomProofResult> {
         self.into()
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for FrbWrapper<test_e2e::G1> {
+impl flutter_rust_bridge::IntoDart for FrbWrapper<mopro_example_app::G1> {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.0.x.into_into_dart().into_dart(),
@@ -843,14 +1070,19 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<test_e2e::G1> {
         .into_dart()
     }
 }
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<test_e2e::G1> {}
-impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<test_e2e::G1>> for test_e2e::G1 {
-    fn into_into_dart(self) -> FrbWrapper<test_e2e::G1> {
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for FrbWrapper<mopro_example_app::G1>
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<mopro_example_app::G1>>
+    for mopro_example_app::G1
+{
+    fn into_into_dart(self) -> FrbWrapper<mopro_example_app::G1> {
         self.into()
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for FrbWrapper<test_e2e::G2> {
+impl flutter_rust_bridge::IntoDart for FrbWrapper<mopro_example_app::G2> {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.0.x.into_into_dart().into_dart(),
@@ -860,14 +1092,40 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<test_e2e::G2> {
         .into_dart()
     }
 }
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive for FrbWrapper<test_e2e::G2> {}
-impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<test_e2e::G2>> for test_e2e::G2 {
-    fn into_into_dart(self) -> FrbWrapper<test_e2e::G2> {
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for FrbWrapper<mopro_example_app::G2>
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<mopro_example_app::G2>>
+    for mopro_example_app::G2
+{
+    fn into_into_dart(self) -> FrbWrapper<mopro_example_app::G2> {
         self.into()
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for FrbWrapper<test_e2e::Halo2ProofResult> {
+impl flutter_rust_bridge::IntoDart for FrbWrapper<mopro_example_app::GnarkProofResult> {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.0.proof.into_into_dart().into_dart(),
+            self.0.public_inputs.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for FrbWrapper<mopro_example_app::GnarkProofResult>
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<mopro_example_app::GnarkProofResult>>
+    for mopro_example_app::GnarkProofResult
+{
+    fn into_into_dart(self) -> FrbWrapper<mopro_example_app::GnarkProofResult> {
+        self.into()
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for FrbWrapper<mopro_example_app::Halo2ProofResult> {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
             self.0.proof.into_into_dart().into_dart(),
@@ -877,33 +1135,42 @@ impl flutter_rust_bridge::IntoDart for FrbWrapper<test_e2e::Halo2ProofResult> {
     }
 }
 impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for FrbWrapper<test_e2e::Halo2ProofResult>
+    for FrbWrapper<mopro_example_app::Halo2ProofResult>
 {
 }
-impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<test_e2e::Halo2ProofResult>>
-    for test_e2e::Halo2ProofResult
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<mopro_example_app::Halo2ProofResult>>
+    for mopro_example_app::Halo2ProofResult
 {
-    fn into_into_dart(self) -> FrbWrapper<test_e2e::Halo2ProofResult> {
+    fn into_into_dart(self) -> FrbWrapper<mopro_example_app::Halo2ProofResult> {
         self.into()
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for FrbWrapper<test_e2e::ProofLib> {
+impl flutter_rust_bridge::IntoDart for FrbWrapper<mopro_example_app::ProofLib> {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         match self.0 {
-            test_e2e::ProofLib::Arkworks => 0.into_dart(),
-            test_e2e::ProofLib::Rapidsnark => 1.into_dart(),
+            mopro_example_app::ProofLib::Arkworks => 0.into_dart(),
+            mopro_example_app::ProofLib::Rapidsnark => 1.into_dart(),
             _ => unreachable!(),
         }
     }
 }
 impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for FrbWrapper<test_e2e::ProofLib>
+    for FrbWrapper<mopro_example_app::ProofLib>
 {
 }
-impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<test_e2e::ProofLib>> for test_e2e::ProofLib {
-    fn into_into_dart(self) -> FrbWrapper<test_e2e::ProofLib> {
+impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<mopro_example_app::ProofLib>>
+    for mopro_example_app::ProofLib
+{
+    fn into_into_dart(self) -> FrbWrapper<mopro_example_app::ProofLib> {
         self.into()
+    }
+}
+
+impl SseEncode for MoproError {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MoproError>>>::sse_encode(flutter_rust_bridge::for_generated::rust_auto_opaque_encode::<_, MoiArc<_>>(self), serializer);
     }
 }
 
@@ -911,6 +1178,17 @@ impl SseEncode for std::collections::HashMap<String, Vec<String>> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <Vec<(String, Vec<String>)>>::sse_encode(self.into_iter().collect(), serializer);
+    }
+}
+
+impl SseEncode
+    for RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MoproError>>
+{
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        let (ptr, size) = self.sse_encode_raw();
+        <usize>::sse_encode(ptr, serializer);
+        <i32>::sse_encode(size, serializer);
     }
 }
 
@@ -928,26 +1206,26 @@ impl SseEncode for bool {
     }
 }
 
-impl SseEncode for test_e2e::CircomProof {
+impl SseEncode for mopro_example_app::CircomProof {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <test_e2e::G1>::sse_encode(self.a, serializer);
-        <test_e2e::G2>::sse_encode(self.b, serializer);
-        <test_e2e::G1>::sse_encode(self.c, serializer);
+        <mopro_example_app::G1>::sse_encode(self.a, serializer);
+        <mopro_example_app::G2>::sse_encode(self.b, serializer);
+        <mopro_example_app::G1>::sse_encode(self.c, serializer);
         <String>::sse_encode(self.protocol, serializer);
         <String>::sse_encode(self.curve, serializer);
     }
 }
 
-impl SseEncode for test_e2e::CircomProofResult {
+impl SseEncode for mopro_example_app::CircomProofResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <test_e2e::CircomProof>::sse_encode(self.proof, serializer);
+        <mopro_example_app::CircomProof>::sse_encode(self.proof, serializer);
         <Vec<String>>::sse_encode(self.inputs, serializer);
     }
 }
 
-impl SseEncode for test_e2e::G1 {
+impl SseEncode for mopro_example_app::G1 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <String>::sse_encode(self.x, serializer);
@@ -956,7 +1234,7 @@ impl SseEncode for test_e2e::G1 {
     }
 }
 
-impl SseEncode for test_e2e::G2 {
+impl SseEncode for mopro_example_app::G2 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <Vec<String>>::sse_encode(self.x, serializer);
@@ -965,7 +1243,15 @@ impl SseEncode for test_e2e::G2 {
     }
 }
 
-impl SseEncode for test_e2e::Halo2ProofResult {
+impl SseEncode for mopro_example_app::GnarkProofResult {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.proof, serializer);
+        <String>::sse_encode(self.public_inputs, serializer);
+    }
+}
+
+impl SseEncode for mopro_example_app::Halo2ProofResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <Vec<u8>>::sse_encode(self.proof, serializer);
@@ -1020,13 +1306,13 @@ impl SseEncode for Option<String> {
     }
 }
 
-impl SseEncode for test_e2e::ProofLib {
+impl SseEncode for mopro_example_app::ProofLib {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <i32>::sse_encode(
             match self {
-                test_e2e::ProofLib::Arkworks => 0,
-                test_e2e::ProofLib::Rapidsnark => 1,
+                mopro_example_app::ProofLib::Arkworks => 0,
+                mopro_example_app::ProofLib::Rapidsnark => 1,
                 _ => {
                     unimplemented!("");
                 }
@@ -1056,6 +1342,16 @@ impl SseEncode for () {
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {}
 }
 
+impl SseEncode for usize {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        serializer
+            .cursor
+            .write_u64::<NativeEndian>(self as _)
+            .unwrap();
+    }
+}
+
 #[cfg(not(target_family = "wasm"))]
 mod io {
     // This file is automatically generated, so please do not edit it.
@@ -1069,10 +1365,25 @@ mod io {
     };
     use flutter_rust_bridge::for_generated::{transform_result_dco, Lifetimeable, Lockable};
     use flutter_rust_bridge::{Handler, IntoIntoDart};
+    use mopro_example_app::*;
 
     // Section: boilerplate
 
     flutter_rust_bridge::frb_generated_boilerplate_io!();
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_mopro_flutter_bindings_rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+        ptr: *const std::ffi::c_void,
+    ) {
+        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MoproError>>::increment_strong_count(ptr as _);
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_mopro_flutter_bindings_rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+        ptr: *const std::ffi::c_void,
+    ) {
+        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MoproError>>::decrement_strong_count(ptr as _);
+    }
 }
 #[cfg(not(target_family = "wasm"))]
 pub use io::*;
@@ -1093,10 +1404,25 @@ mod web {
     use flutter_rust_bridge::for_generated::wasm_bindgen::prelude::*;
     use flutter_rust_bridge::for_generated::{transform_result_dco, Lifetimeable, Lockable};
     use flutter_rust_bridge::{Handler, IntoIntoDart};
+    use mopro_example_app::*;
 
     // Section: boilerplate
 
     flutter_rust_bridge::frb_generated_boilerplate_web!();
+
+    #[wasm_bindgen]
+    pub fn rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+        ptr: *const std::ffi::c_void,
+    ) {
+        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MoproError>>::increment_strong_count(ptr as _);
+    }
+
+    #[wasm_bindgen]
+    pub fn rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMoproError(
+        ptr: *const std::ffi::c_void,
+    ) {
+        MoiArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MoproError>>::decrement_strong_count(ptr as _);
+    }
 }
 #[cfg(target_family = "wasm")]
 pub use web::*;
